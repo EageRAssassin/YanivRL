@@ -1,4 +1,11 @@
-suits = ['hearts', 'diamonds', 'spades', 'clubs']
+from enum import Enum
+
+class Suits(Enum):
+    DIAMONDS    = "Diamonds"
+    CLUBS       = "Clubs"
+    HEARTS      = "Hearts"
+    SPADES      = "Spades"
+
 
 class Card:
     def __init__(self, value, suit):
@@ -7,9 +14,11 @@ class Card:
 
     def __repr__ (self):
         table = {
-            11: "Jack",
-            12: "Queen",
-            13: "King",
-            None: "Joker"}
+            1:      "Ace",
+            11:     "Jack",
+            12:     "Queen",
+            13:     "King",
+            None:   "Joker"
+        }
 
-        return "Joker" if self.value = None else table.get(self.value,str(self.value)) + " of " + self.suit
+        return "Joker" if self.value == None else table.get(self.value,str(self.value)) + " of " + self.suit.value
