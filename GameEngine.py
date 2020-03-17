@@ -44,12 +44,13 @@ class GameEngine:
     def start_game(self):
         prev_discard_cards = []
         discard_cards = []
-        while True:
+        while not self.game_over:
             for player in self.players:
                 discard_cards = player.play_optimally()
                 # the player calls Yaniv
                 if discard_cards == []:
                     print(player, "calls Yaniv")
+                    self.game_over = True
                     break
                 take_discard = player.take_from_discard_random(prev_discard_cards)
                 # the player want to choose randomly from the card pool
