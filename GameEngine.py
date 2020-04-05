@@ -1,68 +1,100 @@
 from Cards import Card
+from Deck import Deck
 from numpy.random import shuffle
 import math
 import random
-
+from BasePlayer import BasePlayer
+from RandomPlayer import RandomPlayer
 
 class GameEngine:
     """Initializes a new game of Yaniv"""
 
-    def __init__(self, **players):
-        """init players"""
-        self.players = [player for player in players]
-        self.current_player = 0
+    def __init__(self, players):
 
         """init cards"""
-        # cards from draw pile goes to players hands
-        Suits = ["Clubs", "Diamonds", "Hearts", "Spades"]
-        self.draw_pile = [Card(val, suit) for val in range(1, 14) for suit in Suits]
-        self.draw_pile.append(Card(None, None))
-        self.draw_pile.append(Card(None, None))
-        shuffle(self.draw_pile)
-
-        # current play is top of discard pile, where player can take cards
-        # plays made by players goes to the current play
-        # which pushes the existing current play to discard
-        self.current_play = []
-        self.discard_pile = []
+        self.deck = Deck()
+        self.players = players
 
         """init game vars"""
-        self.game_over = False
+        # self.game_over = False
         self.turn_number = 0
 
-        """init player hands"""
-        self.hands = [[self.draw_pile.pop() for _ in range(7)] for player in players]
+        # """init player hands"""
+        # self.hands = [[self.draw_pile.pop() for _ in range(7)] for player in players]
 
-        for i in range(len(players)):
-            players[i].add_cards_to_hand(self.hands[i])
+        # for i in range(len(players)):
+        #     players[i].add_cards_to_hand(self.hands[i])
 
-        """init top of discard pile"""
-        self.current_play = [self.draw_pile.pop()]
+        # """init top of discard pile"""
+        # self.current_play = [self.draw_pile.pop()]
 
-    # def take_turn(self):
+    def get_top_discard(self):
+        return self.deck.get_top_discard()
 
-    def start_game(self):
-        prev_discard_cards = []
-        discard_cards = []
-        while not self.game_over:
+    def get_top_card(self):
+        return self.deck.get_top_card()
+
+    def play_games(self, num_games):
+        for i in range(num_games):
+            self.deck = Deck()
+            self.deal_card()
+            self.game_loop()
+
+    def deal_card(self):
+        for player in self.players:
+            cards = [self.deck.draw_top_card() for _ in range(7)]
+            player.add_cards_to_hand(cards)
+
+    def game_loop(self, max_round=100):
+        round_cnt = 0        
+        while round_cnt < max_round:
+            print("======== Round " + str(round_cnt) + " =========")
             for player in self.players:
-                discard_cards = player.play_optimally()
-                # the player calls Yaniv
-                if discard_cards == []:
+                print("----- Current player :" + str(player) + "-------")
+                if player.decide_call_yaniv(self):
                     print(player, "calls Yaniv")
-                    self.game_over = True
-                    break
-                take_discard = player.take_from_discard_random(prev_discard_cards)
-                # the player want to choose randomly from the card pool
-                if take_discard is None:
-                    random_card = self.take_random_from_card_pool()
-                    player.add_cards_to_hand(random_card)
-                    self.draw_pile.remove(random_card)
-                else:
-                    self.draw_pile.append(prev_discard_cards)
-                    self.draw_pile.remove(take_discard)
-                prev_discard_cards = discard_cards
+                    return player, self.get_players_scores(player)
+                
+                ''' Discard phase '''
+                discard_cards = player.decide_cards_to_discard(self)
+                print("Player discards : ", [c for c in discard_cards])
+                player.extract_cards(discard_cards)
+                self.deck.discard(discard_cards)
 
-    def take_random_from_card_pool(self):
-        choice = random.uniform(0, len(self.draw_pile))
-        return self.draw_pile[math.floor(choice)]
+                ''' Draw phase '''
+                pile_to_draw_from, cards = player.decide_cards_to_draw(self)
+                if pile_to_draw_from == "discard_pile" :
+                    discard_top = self.deck.draw_top_discard()
+                    player.add_cards_to_hand([discard_top])
+                elif pile_to_draw_from == "unseen_pile":
+                    card = self.deck.draw_top_card()
+                    player.add_cards_to_hand([card])
+                print("Player draws from : ", pile_to_draw_from)
+
+                round_cnt += 1
+                # the player want to choose randomly from the card pool
+                # if take_discard is None:
+                #     card = self.deck.draw_top_card()
+                #     player.add_cards_to_hand(card)
+                # else:
+                #     player.add_cards_to_hand(take_discard)
+                #     
+                #     self.draw_pile.append(prev_discard_cards)
+                #     self.draw_pile.remove(take_discard)
+                # prev_discard_cards = discard_cards        
+
+    def get_players_scores(self, yaniv_caller):
+        scores_dict = {}
+        for player in self.players:
+            if player is yaniv_caller:
+                    scores_dict[player.id] = 0
+            else:
+                scores_dict[player.id] = player.get_hand_value()
+        return scores_dict
+
+
+if __name__ == '__main__':
+    players = [RandomPlayer("Random1"), RandomPlayer("Random2")]
+
+    game = GameEngine(players)
+    game.play_games(1)

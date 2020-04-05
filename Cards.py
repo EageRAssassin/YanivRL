@@ -16,5 +16,5 @@ class Card:
             return "King" + " of " + self.suit
         return str(self.value) + " of " + self.suit
 
-c = Card(12, "Clubs")
-print(c)
+# c = Card(12, "Clubs")
+# print(c)
