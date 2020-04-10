@@ -3,11 +3,13 @@ import os
 
 import rlcard
 from rlcard.agents.dqn_agent import DQNAgent
-from rlcard.agents.random_agent import RandomAgent
+
 from rlcard.utils.utils import set_global_seed, tournament
 from rlcard.utils.logger import Logger
 
+from ReinforcementLearning.RandomAgent import RandomAgent
 # Make environment
+
 env = rlcard.make('doudizhu')
 eval_env = rlcard.make('doudizhu')
 
@@ -25,7 +27,7 @@ memory_init_size = 1000
 train_every = 1
 
 # The paths for saving the logs and learning curves
-log_dir = './experiments/doudizhu_dqn_result/'
+log_dir = './experiments/yaniv_dqn_result/'
 
 # Set a global seed
 set_global_seed(0)
@@ -72,9 +74,8 @@ with tf.Session() as sess:
     logger.plot('DQN')
 
     # Save model
-    save_dir = 'models/doudizhu_dqn'
+    save_dir = 'models/yaniv_dqn'
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
     saver = tf.train.Saver()
     saver.save(sess, os.path.join(save_dir, 'model'))
-

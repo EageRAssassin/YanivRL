@@ -45,6 +45,13 @@ class Deck:
         self.shuffle()
         self.discards.append(top_discard)
 
+    def get_cards(self):
+        return self.cards
+
+    def get_discards(self):
+        return self.discards
+
+
 if __name__ == '__main__':
     d = Deck()
     print(d.draw_top_card())

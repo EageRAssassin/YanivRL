@@ -3,6 +3,7 @@ import numpy as np
 from GameEngine import GameEngine
 from RandomPlayer import RandomPlayer
 from ReinforcementLearning.env import Env
+from ReinforcementLearning.utils import ACTION_LIST
 
 
 class YanivEnv(Env):
@@ -120,6 +121,7 @@ class YanivEnv(Env):
         Returns:
             (numpy.array): The observed state of the player
         """
+        # TODO
         self.get_state(player_id)
 
     def get_payoffs(self):
@@ -177,15 +179,15 @@ class YanivEnv(Env):
         Returns:
             legal_actions (list): a list of legal actions' id
         """
+        # TODO
         legal_action_id = []
         legal_actions = self.game.state['actions']
-        if legal_actions:
-            for action in legal_actions:
-                for abstract in SPECIFIC_MAP[action]:
-                    action_id = ACTION_SPACE[abstract]
-                    if action_id not in legal_action_id:
-                        legal_action_id.append(action_id)
-
+        # if legal_actions:
+        #     for action in legal_actions:
+        #         for abstract in SPECIFIC_MAP[action]:
+        #             action_id = ACTION_SPACE[abstract]
+        #             if action_id not in legal_action_id:
+        #                 legal_action_id.append(action_id)
         legal_action_id = []
 
         return legal_action_id

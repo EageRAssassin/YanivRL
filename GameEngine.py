@@ -138,29 +138,19 @@ class GameEngine:
             (dict): The state of the player
         '''
         player = self.players[player_id]
-        others_hands = self._get_others_current_hand(player)
-        if self.is_over():
-            actions = None
-        else:
-            actions = list(player.available_actions(self.round.greater_player, self.judger))
+
         state = {}
-        state['deck'] = self.deck
-        # seen cards
-        # state['seen_cards'] = public['seen_cards']
-        # state['trace'] = public['trace'].copy()
+        state['deck'] = self.deck.get_cards()
+        state['discards'] = self.deck.get_discards()
         state['self'] = self.player_id
-        state['initial_hand'] = self.initial_hand
-        state['current_hand'] = cards2str(self.players[player_id].show_cards())
-        state['others_hand'] = others_hands
-        state['actions'] = self.players[player_id].show_plays()
+        state['current_hand'] = cards2str(player.show_cards())
+        # state['others_hand'] = others_hands
+        state['actions'] = player.show_plays()
         # example of state
         # {
         #     'deck': '3333444455556666777788889999TTTTJJJJQQQQKKKKAAAA2222BR',
-        #     'seen_cards': 'TQA',
+        #     'discards': 'TQA',
         #     'self': 2,
-        #     'initial_hand': '3456677799TJQKAAB',
-        #     'trace': [(0, '8222'), (1, 'pass'), (2, 'pass'), (0, '6KKK'),
-        #               (1, 'pass'), (2, 'pass'), (0, '8'), (1, 'Q')],
         #     'played_cards': ['6', '8', '8', 'Q', 'K', 'K', 'K', '2', '2', '2'],
         #     'others_hand': '333444555678899TTTJJJQQAA2R',
         #     'current_hand': '3456677799TJQKAAB',

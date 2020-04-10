@@ -16,5 +16,8 @@ class Card:
             return "King" + " of " + self.suit
         return str(self.value) + " of " + self.suit
 
+    def get_str(self):
+        return self.value + '-' + self.suit
+
 # c = Card(12, "Clubs")
 # print(c)
