@@ -14,9 +14,9 @@ class GameEngine:
         """init cards"""
         self.deck = Deck()
         self.players = players
-
+        self.player_id = 0
         """init game vars"""
-        # self.game_over = False
+        self.game_over = False
         self.turn_number = 0
 
         # """init player hands"""
@@ -83,6 +83,40 @@ class GameEngine:
                 #     self.draw_pile.remove(take_discard)
                 # prev_discard_cards = discard_cards        
 
+    def step(self, action):
+        """ Perform one step for the game for DQN """
+        # select player
+        player = self.players[self.current_player_id]
+
+        if player.decide_call_yaniv(self):
+            game_over = True
+            print(player, "calls Yaniv")
+            return player, self.get_players_scores(player)
+
+        ''' Discard phase '''
+        discard_cards = player.decide_cards_to_discard(self)
+        print("Player discards : ", [c for c in discard_cards])
+        player.extract_cards(discard_cards)
+        self.deck.discard(discard_cards)
+
+        ''' Draw phase '''
+        pile_to_draw_from, cards = player.decide_cards_to_draw(self)
+        if pile_to_draw_from == "discard_pile":
+            discard_top = self.deck.draw_top_discard()
+            player.add_cards_to_hand([discard_top])
+        elif pile_to_draw_from == "unseen_pile":
+            card = self.deck.draw_top_card()
+            player.add_cards_to_hand([card])
+        print("Player draws from : ", pile_to_draw_from)
+
+        self.turn_number += 1
+        self.player_id = (self.player_id + 1) % len(self.players)
+
+        # get next state
+        state = self.get_state(self.player_id)
+        self.state = state
+        return state, self.player_id
+
     def get_players_scores(self, yaniv_caller):
         scores_dict = {}
         for player in self.players:
@@ -92,6 +126,40 @@ class GameEngine:
                 scores_dict[player.id] = player.get_hand_value()
         return scores_dict
 
+    def get_state(self, player_id):
+        ''' Return player's state for DQN
+
+        Args:
+            player_id (int): player id
+
+        Returns:
+            (dict): The state of the player
+        '''
+        player = self.players[player_id]
+        others_hands = self._get_others_current_hand(player)
+        if self.is_over():
+            actions = None
+        else:
+            actions = list(player.available_actions(self.round.greater_player, self.judger))
+        state = {}
+        state['deck'] = public['deck']
+        state['seen_cards'] = public['seen_cards']
+        state['landlord'] = public['landlord']
+        state['trace'] = public['trace'].copy()
+        state['played_cards'] = public['played_cards'].copy()
+        state['self'] = self.player_id
+        state['initial_hand'] = self.initial_hand
+        state['current_hand'] = cards2str(self._current_hand)
+        state['others_hand'] = others_hands
+        state['actions'] = actions
+
+        return state
+
+    def is_over(self):
+        return self.game_over
+
+    def get_payoff(self):
+        return -self.turn_number
 
 if __name__ == '__main__':
     players = [RandomPlayer("Random1"), RandomPlayer("Random2")]

@@ -8,6 +8,7 @@ from keras.optimizers import Adam
 
 EPISODES = 1000
 
+
 class DQNAgent:
     def __init__(self, state_size, action_size):
         self.state_size = state_size
@@ -69,8 +70,11 @@ if __name__ == "__main__":
     batch_size = 32
 
     for e in range(EPISODES):
+
         state = env.reset()
+
         state = np.reshape(state, [1, state_size])
+        
         for time in range(500):
             # env.render()
             action = agent.act(state)
