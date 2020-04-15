@@ -53,7 +53,7 @@ class Player:
                 #remember that as part of sort_value, cards with the same suit are separated from each other by 4, not 1.
                 #if the length of the "consideration hand" is 3 or more, add the current entry to the "valid plays" array
                 #if the values do not line up, break from this completely and consider a new "anchor card"
-                for j in range (len(self.hand) - i + 1):
+                for j in range (i + 1, len(self.hand)):
                     if sort_value(self.hand[j].value) == (sort_value(straight_considered[-1].value) + 4) :
                         straight_considered.append(self.hand[j])
                         if len(straight_considered) >= 3:
