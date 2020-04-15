@@ -45,7 +45,14 @@ class YanivEnv(Env):
                 (dict): The next state
                 (int): The ID of the next player
         """
-        self.step(action, raw_action)
+        action = self._decode_action(action)
+        self.timestep += 1
+        # Record the action for human interface
+        if self.record_action:
+            self.action_recorder.append([self.get_player_id(), action])
+        next_state, player_id = self.game.step(action)
+
+        return self._extract_state(next_state), player_id
 
     def set_agents(self, agents):
         """ Set the agents that will interact with the environment
@@ -141,37 +148,7 @@ class YanivEnv(Env):
         Returns:
             action (string): the action that will be passed to the game engine.
         """
-        abstract_action = ACTION_LIST[action_id]
-        # without kicker
-        if '*' not in abstract_action:
-            return abstract_action
-        # with kicker
-        legal_actions = self.game.state['actions']
-        specific_actions = []
-        kickers = []
-        for legal_action in legal_actions:
-            for abstract in SPECIFIC_MAP[legal_action]:
-                main = abstract.strip('*')
-                if abstract == abstract_action:
-                    specific_actions.append(legal_action)
-                    kickers.append(legal_action.replace(main, '', 1))
-                    break
-        # choose kicker with minimum score
-        player_id = self.game.get_player_id()
-        kicker_scores = []
-        for kicker in kickers:
-            score = 0
-            for action in self.game.judger.playable_cards[player_id]:
-                if kicker in action:
-                    score += 1
-            kicker_scores.append(score+CARD_RANK_STR.index(kicker[0]))
-        min_index = 0
-        min_score = kicker_scores[0]
-        for index, score in enumerate(kicker_scores):
-            if score < min_score:
-                min_score = score
-                min_index = index
-        return specific_actions[min_index]
+        return action_id
 
     def _get_legal_actions(self):
         """ Get all legal actions for current state
