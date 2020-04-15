@@ -30,13 +30,14 @@ class Player:
             plays.append([card])
 
         # two or more cards of same value
-        running_same_value_set = [self.hand[0]]
-        for card in self.hand[1:]:
-            if running_same_value_set[-1].value == card.value:
-                running_same_value_set.append(card)
-                plays.append(running_same_value_set)
-            else:
-                running_same_value_set = [card]
+        for i in range (len(self.hand)):
+            running_same_value_set = [self.hand[i]]
+            for j in range (i + 1, len(self.hand)):
+                if running_same_value_set[-1].value == self.hand[j].value:
+                    running_same_value_set.append(self.hand[j])
+                    plays.append(running_same_value_set)
+                else:
+                    break
 
         #Consider every card in hand, except the last 2 and except the jokers, as an "anchor card", the first card of a straight
         #TBD - queens and kings can't start? the logic should catch this, however
