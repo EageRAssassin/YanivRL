@@ -54,13 +54,13 @@ class Player:
                 #if the length of the "consideration hand" is 3 or more, add the current entry to the "valid plays" array
                 #if the values do not line up, break from this completely and consider a new "anchor card"
                 for j in range (i + 1, len(self.hand)):
-                    if sort_value(self.hand[j].value) == (sort_value(straight_considered[-1].value) + 4) :
+                    if self.hand[j].sort_value() == (straight_considered[-1].sort_value() + 4) :
                         straight_considered.append(self.hand[j])
                         if len(straight_considered) >= 3:
                             # CHECK: does this append a copy or the actual array? Will future edits overwrite the hand?
                             plays.append(straight_considered)
                     #break, as the current sequence has ended
-                    elif sort_value(self.hand[j].value) > (sort_value(straight_considered[-1].value) + 4) :
+                    elif self.hand[j].sort_value() > (straight_considered[-1].sort_value() + 4) :
                         break
 
         return plays
