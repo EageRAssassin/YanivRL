@@ -31,7 +31,6 @@ class Player:
 
         # two or more cards of same value
         for i in range (len(self.hand)):
-            running_same_value_set = [self.hand[i]]
             #issue and workaround:
             #If we have all four "2" cards, we want to output every possible combination
             #of them, i.e.:
@@ -39,25 +38,14 @@ class Player:
             #
             #We can achieve a hacky workaround by considering all cards except for the first 1, first 2,
             #and first 3 in separate loops
-            for j in range (i + 1, len(self.hand)):
-                if running_same_value_set[-1].value == self.hand[j].value:
-                    running_same_value_set.append(self.hand[j])
-                    plays.append(running_same_value_set)
-                else:
-                    break
-            for j in range (i + 2, len(self.hand)):
-                if running_same_value_set[-1].value == self.hand[j].value:
-                    running_same_value_set.append(self.hand[j])
-                    plays.append(running_same_value_set)
-                else:
-                    break
-            for j in range (i + 3, len(self.hand)):
-                if running_same_value_set[-1].value == self.hand[j].value:
-                    running_same_value_set.append(self.hand[j])
-                    plays.append(running_same_value_set)
-                else:
-                    break
-
+            for k in range(1,4):
+                running_same_value_set = [self.hand[i]]
+                for j in range (i + k, len(self.hand)):
+                    if running_same_value_set[-1].value == self.hand[j].value:
+                        running_same_value_set.append(self.hand[j])
+                        plays.append(running_same_value_set.copy())
+                    else:
+                        break
 
         #Consider every card in hand, except the last 2 and except the jokers, as an "anchor card", the first card of a straight
         #TBD - queens and kings can't start? the logic should catch this, however
