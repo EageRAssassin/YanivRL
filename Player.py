@@ -1,6 +1,7 @@
 import random
 import Cards
 import math
+import Helpers
 
 
 # class for Players that all Players should inherit from
@@ -23,51 +24,7 @@ class Player:
         self.hand.sort(key=lambda c: c.sort_value())
 
     def show_plays(self):
-        """A  function that shows all the playable strategies"""
-        # trivial sets
-        plays = []
-        for card in self.hand:
-            plays.append([card])
-
-        # two or more cards of same value
-        for i in range (len(self.hand)):
-            #issue and workaround:
-            #If we have all four "2" cards, we want to output every possible combination
-            #of them, i.e.:
-            #[2spades, 2hearts], [2spades,2diamonds], [2spades,2clubs], [2spades,2hearts,2diamonds], etc.
-            #
-            #We can achieve a hacky workaround by considering all cards except for the first 1, first 2,
-            #and first 3 in separate loops
-            for k in range(1,4):
-                running_same_value_set = [self.hand[i]]
-                for j in range (i + k, len(self.hand)):
-                    if running_same_value_set[-1].value == self.hand[j].value:
-                        running_same_value_set.append(self.hand[j])
-                        plays.append(running_same_value_set.copy())
-                    else:
-                        break
-
-        #Consider every card in hand, except the last 2 and except the jokers, as an "anchor card", the first card of a straight
-        #TBD - queens and kings can't start? the logic should catch this, however
-        for i in range (len(self.hand) - 2):
-            #jokers cannot be part of a straight
-            if self.hand[i].value != 0:
-                #form a "consideration hand" starting with the "anchor card"
-                straight_considered = [self.hand[i]]
-                #for every card after, if the value is 1 more than previous card, append it to the "consideration hand".
-                #remember that as part of sort_value, cards with the same suit are separated from each other by 4, not 1.
-                #if the length of the "consideration hand" is 3 or more, add the current entry to the "valid plays" array
-                #if the values do not line up, break from this completely and consider a new "anchor card"
-                for j in range (i + 1, len(self.hand)):
-                    if self.hand[j].sort_value() == (straight_considered[-1].sort_value() + 4) :
-                        straight_considered.append(self.hand[j])
-                        if len(straight_considered) >= 3:
-                            plays.append(straight_considered.copy())
-                    #break, as the current sequence has ended
-                    elif self.hand[j].sort_value() > (straight_considered[-1].sort_value() + 4) :
-                        break
-
-        return plays
+        return Helpers.show_plays(self.hand)
 
     def play_optimally(self):
         """A function that chooses to play optimally by choosing the last option in the plays"""
@@ -83,10 +40,7 @@ class Player:
         return self.get_hand_value() <= 5
 
     def get_hand_value(self):
-        sum = 0
-        for card in self.hand:
-            sum += card.value
-        return sum
+        Helpers.get_hand_value(self.hand)
 
     def decide_cards_to_draw(self, game):
         '''

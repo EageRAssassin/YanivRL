@@ -16,6 +16,13 @@ class Card:
             return "King" + " of " + self.suit
         return str(self.value) + " of " + self.suit
 
+    def __eq__(self, other):
+        if isinstance(other, Card):
+            if (self.value == 0):
+                return other.value == 0
+            return self.value == other.value and self.suit == other.suit
+        return False
+
     def get_str(self):
         return self.value + '-' + self.suit
 
