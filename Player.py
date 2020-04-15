@@ -42,14 +42,27 @@ class Player:
         if len(running_same_value_set) > 1:
             plays.append(running_same_value_set)
 
-        # the choices for a straight
-        # TODO: did not consider straight with more than three cards
-        for i in range(len(self.hand) - 2):
-            for j in range(i, len(self.hand) - 1):
-                for k in range(j, len(self.hand)):
-                    if self.hand[i].value + 2 == self.hand[j].value + 1 == self.hand[k].value \
-                            and self.hand[i].suit == self.hand[j].suit == self.hand[k].suit:
-                        plays.append([self.hand[i], self.hand[j], self.hand[k]])
+        #Consider every card in hand, except the last 2 and except the jokers, as an "anchor card", the first card of a straight
+        #TBD - queens and kings can't start? the logic should catch this, however
+        for i in range (len(self.hand) - 2):
+            #jokers cannot be part of a straight
+            if self.hand[i].value != 0:
+                #form a "consideration hand" starting with the "anchor card"
+                straight_considered = [self.hand[i]]
+                #for every card after, if the value is 1 more than previous card, append it to the "consideration hand".
+                #remember that as part of sort_value, cards with the same suit are separated from each other by 4, not 1.
+                #if the length of the "consideration hand" is 3 or more, add the current entry to the "valid plays" array
+                #if the values do not line up, break from this completely and consider a new "anchor card"
+                for j in range (len(self.hand) - i + 1):
+                    if sort_value(self.hand[j].value) == (sort_value(straight_considered[-1].value) + 4) :
+                        straight_considered.append(self.hand[j])
+                        if len(straight_considered) >= 3:
+                            # CHECK: does this append a copy or the actual array? Will future edits overwrite the hand?
+                            plays.append(straight_considered)
+                    #break, as the current sequence has ended
+                    elif sort_value(self.hand[j].value) > (sort_value(straight_considered[-1].value) + 4) :
+                        break
+
         return plays
 
     def play_optimally(self):
