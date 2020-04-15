@@ -34,13 +34,9 @@ class Player:
         for card in self.hand[1:]:
             if running_same_value_set[-1].value == card.value:
                 running_same_value_set.append(card)
-            elif len(running_same_value_set) > 1:
                 plays.append(running_same_value_set)
-                running_same_value_set = [card]
             else:
                 running_same_value_set = [card]
-        if len(running_same_value_set) > 1:
-            plays.append(running_same_value_set)
 
         #Consider every card in hand, except the last 2 and except the jokers, as an "anchor card", the first card of a straight
         #TBD - queens and kings can't start? the logic should catch this, however
@@ -57,8 +53,7 @@ class Player:
                     if self.hand[j].sort_value() == (straight_considered[-1].sort_value() + 4) :
                         straight_considered.append(self.hand[j])
                         if len(straight_considered) >= 3:
-                            # CHECK: does this append a copy or the actual array? Will future edits overwrite the hand?
-                            plays.append(straight_considered)
+                            plays.append(straight_considered.copy())
                     #break, as the current sequence has ended
                     elif self.hand[j].sort_value() > (straight_considered[-1].sort_value() + 4) :
                         break
