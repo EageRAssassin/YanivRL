@@ -15,12 +15,12 @@ class Player:
     def extract_cards(self, cards):
         for card in cards:
             self.hand.remove(card)
-        
+
     def add_cards_to_hand(self, cards):
         """A  function that receives card and organize on his hands"""
         for card in cards:
             self.hand.append(card)
-        self.hand.sort(key=lambda c: c.value)
+        self.hand.sort(key=lambda c: c.sort_value())
 
     def show_plays(self):
         """A  function that shows all the playable strategies"""
@@ -73,7 +73,7 @@ class Player:
 
     def decide_cards_to_draw(self, game):
         '''
-            Decide which pile the player wish to draw card(s) from, 
+            Decide which pile the player wish to draw card(s) from,
             and which cards he wish to draw.
 
             Returns pile (string rep), a list of card

@@ -19,5 +19,19 @@ class Card:
     def get_str(self):
         return self.value + '-' + self.suit
 
+    """ used to sort card by value, then suit"""
+    def sort_value(self):
+        if self.value == 0:
+            return 0
+        if self.suit == "Spades":
+            return 4 * self.value
+        if self.suit == "Hearts":
+            return 4 * self.value + 1
+        if self.suit == "Diamonds":
+            return 4 * self.value + 2
+        if self.suit == "Clubs":
+            return 4 * self.value + 3
+
+
 # c = Card(12, "Clubs")
 # print(c)
