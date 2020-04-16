@@ -28,9 +28,7 @@ class Env(object):
         """
         self.allow_step_back = False
         self.allow_raw_data = config['allow_raw_data']
-        self.record_action = config['record_action']
-        if self.record_action:
-            self.action_recorder = []
+        self.record_action = False
 
         # Get the number of players/actions in this game
         self.player_num = config['player_num']

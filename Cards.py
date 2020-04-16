@@ -18,13 +18,15 @@ class Card:
 
     def __eq__(self, other):
         if isinstance(other, Card):
-            if (self.value == 0):
+            if self.value == 0:
                 return other.value == 0
             return self.value == other.value and self.suit == other.suit
         return False
 
     def get_str(self):
-        return self.value + '-' + self.suit
+        if self.value == 0:
+            return '0'
+        return str(self.value) + '-' + self.suit
 
     """ used to sort card by value, then suit"""
     def sort_value(self):

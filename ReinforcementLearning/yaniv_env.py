@@ -3,7 +3,7 @@ import numpy as np
 from GameEngine import GameEngine
 from RandomPlayer import RandomPlayer
 from ReinforcementLearning.env import Env
-from ReinforcementLearning.utils import ACTION_LIST
+from ReinforcementLearning.utils import encode_cards
 
 
 class YanivEnv(Env):
@@ -47,11 +47,7 @@ class YanivEnv(Env):
         """
         action = self._decode_action(action)
         self.timestep += 1
-        # Record the action for human interface
-        if self.record_action:
-            self.action_recorder.append([self.get_player_id(), action])
         next_state, player_id = self.game.step(action)
-
         return self._extract_state(next_state), player_id
 
     def set_agents(self, agents):
@@ -98,17 +94,15 @@ class YanivEnv(Env):
         obs = np.zeros((6, 5, 15), dtype=int)
         for index in range(6):
             obs[index][0] = np.ones(15, dtype=int)
-        encode_cards(obs[0], state['current_hand'])
-        encode_cards(obs[1], state['others_hand'])
+        obs[0] = encode_cards(state['current_hand'])
+
         for i, action in enumerate(state['trace'][-3:]):
             if action[1] != 'pass':
-                encode_cards(obs[4-i], action[1])
+                obs[4-i] = encode_cards(action[1])
         if state['played_cards'] is not None:
-            encode_cards(obs[5], state['played_cards'])
+            obs[5] = encode_cards(state['played_cards'])
 
         extracted_state = {'obs': obs, 'legal_actions': self._get_legal_actions()}
-        if self.record_action:
-            extracted_state['action_record'] = self.action_recorder
         return extracted_state
 
     def get_player_id(self):
@@ -156,18 +150,7 @@ class YanivEnv(Env):
         Returns:
             legal_actions (list): a list of legal actions' id
         """
-        # TODO
-        legal_action_id = []
-        legal_actions = self.game.state['actions']
-        # if legal_actions:
-        #     for action in legal_actions:
-        #         for abstract in SPECIFIC_MAP[action]:
-        #             action_id = ACTION_SPACE[abstract]
-        #             if action_id not in legal_action_id:
-        #                 legal_action_id.append(action_id)
-        legal_action_id = []
-
-        return legal_action_id
+        return self.game.state['actions']
 
     def _single_agent_step(self, action):
         """ Step forward for human/single agent
