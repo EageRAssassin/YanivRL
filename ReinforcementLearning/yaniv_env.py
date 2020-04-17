@@ -1,5 +1,6 @@
 import numpy as np
 
+from BasePlayer import BasePlayer
 from GameEngine import GameEngine
 from RandomPlayer import RandomPlayer
 from ReinforcementLearning.env import Env
@@ -13,13 +14,10 @@ class YanivEnv(Env):
     def __init__(self, config):
         super().__init__(config)
 
-        # initialize the yaniv game
-
-        players = [RandomPlayer("Random1"), RandomPlayer("Random2")]
+        # initialize the Yaniv game
+        players = [BasePlayer("BasePlayer1"), BasePlayer("BasePlayer2"), BasePlayer("BasePlayer3")]
         self.game = GameEngine(players)
-
-        # TODO to be discussed and changed
-        self.state_shape = [6, 5, 15]
+        self.state_shape = [4, 54]
 
     def init_game(self):
         """ Start a new game
@@ -85,22 +83,17 @@ class YanivEnv(Env):
             state (dict): dict of original state
 
         Returns:
-            numpy array: 6*5*15 array
-                         6 : current hand
-                             the union of the other two players' hand
-                             the recent three actions
-                             the union of all played cards
+            numpy array: 6*54 array
+                         deck cards
+                         discard cards
+                         current hand
+                         the union of the other two players' hand
         """
-        obs = np.zeros((6, 5, 15), dtype=int)
-        for index in range(6):
-            obs[index][0] = np.ones(15, dtype=int)
-        obs[0] = encode_cards(state['current_hand'])
-
-        for i, action in enumerate(state['trace'][-3:]):
-            if action[1] != 'pass':
-                obs[4-i] = encode_cards(action[1])
-        if state['played_cards'] is not None:
-            obs[5] = encode_cards(state['played_cards'])
+        obs = np.zeros((4, 54), dtype=int)
+        obs[0] = encode_cards(state['deck'])
+        obs[1] = encode_cards(state['discards'])
+        obs[2] = encode_cards(state['current_hand'])
+        obs[3] = encode_cards(state['played_cards'])
 
         extracted_state = {'obs': obs, 'legal_actions': self._get_legal_actions()}
         return extracted_state
@@ -112,18 +105,6 @@ class YanivEnv(Env):
             (int): The id of the current player
         """
         self.get_player_id()
-
-    def get_state(self, player_id):
-        """ Get the state given player id
-
-        Args:
-            player_id (int): The player id
-
-        Returns:
-            (numpy.array): The observed state of the player
-        """
-        # TODO
-        self.get_state(player_id)
 
     def get_payoffs(self):
         """ Get the payoffs of players. Must be implemented in the child class.

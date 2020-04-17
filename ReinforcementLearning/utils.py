@@ -9,35 +9,109 @@ double_combination = [["Clubs", "Diamonds"], ["Clubs", "Hearts"], ["Clubs", "Spa
 triple_combination = [["Clubs", "Diamonds", "Hearts"], ["Clubs", "Diamonds", "Spades"], ["Clubs", "Hearts", "Spades"],
                       ["Diamonds", "Hearts", "Spades"]]
 
-# initialize the one-hot dictionary for cards
-# NOT USED FOR NOW
+# Initialize the one-hot dictionary for cards
 card_encoding_dict = {}
 num = 0
 for s in suits:
     for v in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13']:
-        card = s+"-"+v
+        card = v+"-"+s
         card_encoding_dict[card] = num
         num += 1
 # encode the two joker
 card_encoding_dict['01'] = num
 num += 1
 card_encoding_dict['02'] = num
-# NOT USED FOR NOW
 
 
-def encode_cards(cards):
-    # encode the cards into a
+def encode_cards(cards_str):
+    """ Encode cards and save it into plane. """
+    plane = np.zeros(54, dtype=int)
+    joker_counter = 0
+    for card_str in cards_str:
+        if card_str == '0' and joker_counter == 0:
+            # handle the first joker situation
+            joker_counter = 1
+            index = card_encoding_dict['01']
+            plane[index] = 1
+        elif card_str == '0' and joker_counter == 1:
+            # handle the second joker situation
+            index = card_encoding_dict['02']
+            plane[index] = 1
+        else:
+            index = card_encoding_dict[card_str]
+            plane[index] = 1
+    return plane
+
+
+def cards_to_str(cards):
+    """ Encode cards into a list of string """
     cards_list = []
     for c in cards:
         cards_list.append(c.get_str())
     return cards_list
 
 
-def encode_action_discard(action):
+def encode_action_discard(play_list):
     """ Return action id of the action from the player
         returned action id is a integer ranging from 0 to 347
     """
-    return 0
+    action_id_list = []
+    for play in play_list:
+        # encode the cards in plays into individual action id
+        # TODO if YANIV is included in the plays
+        # TODO Does the straight plays from player always sorted?
+
+        cards_have_same_value = True
+        for card in play:
+            if card.value != play[0].value:
+                cards_have_same_value = False
+
+        action = 0
+        if len(play) == 1:
+            # single
+            suit_num = suits.index(play[0].suit)
+            action = suit_num * 13 + card.value - 1
+            action += 1
+        elif len(play) == 2 and cards_have_same_value:
+            # double
+            suits_temp = [play[0].suit, play[1].suit]
+            suits_temp.sort()
+            suit_num = double_combination.index(suits_temp)
+            action = suit_num * 13 + card.value - 1
+            action += 53
+        elif len(play) == 3 and cards_have_same_value:
+            # triple
+            suits_temp = [play[0].suit, play[1].suit, play[2].suit]
+            suits_temp.sort()
+            suit_num = triple_combination.index(suits_temp)
+            action = suit_num * 13 + card.value - 1
+            action += 131
+        elif len(play) == 4 and cards_have_same_value:
+            # quadruple
+            action = play[0].value - 1
+            action += 183
+        elif len(play) == 3:
+            # straight of 3
+            suit_num = suits.index(play[0].suit)
+            action = suit_num * 11 + play[0].value - 1
+            action += 196
+        elif len(play) == 4:
+            # straight of 4
+            suit_num = suits.index(play[0].suit)
+            action = suit_num * 10 + play[0].value - 1
+            action += 240
+        elif len(play) == 5:
+            # straight of 5
+            suit_num = suits.index(play[0].suit)
+            action = suit_num * 9 + play[0].value - 1
+            action += 280
+        elif len(play) == 6:
+            # straight of 6
+            suit_num = suits.index(play[0].suit)
+            action = suit_num * 8 + play[0].value - 1
+            action += 316
+        action_id_list.append(action)
+    return action_id_list
 
 
 def decode_action_discard(action):
@@ -101,9 +175,38 @@ def decode_action_discard(action):
     return discard
 
 
-# discard_cards = decode_action_discard(347)
+""" Convert cards to string test """
+# cards = [Card(12, "Clubs"), Card(0, ''), Card(0, ''), Card(2, 'Hearts')]
+# cards_str_temp = cards_to_str(cards)
+# print(cards_str_temp)
+
+""" Encode Cards test """
+# cards_encoding = encode_cards(cards_str_temp)
+# print(cards_encoding)
+
+""" General Encoding and Decoding Cards test """
+# for suit in ["Clubs", "Diamonds", "Hearts", "Spades"]:
+#     for rank in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]:
+#         cards = [Card(rank, suit)]
+#         cards_str_temp = cards_to_str(cards)
+#         cards_encoding = encode_cards(cards_str_temp)
+#         print(cards_encoding)
+
+""" Decode action test """
+# action_id = 185
+# print(action_id)
+# discard_cards = decode_action_discard(action_id)
 # print(discard_cards)
 
-cards = [Card(12, "Clubs"), Card(0, ''), Card(0, ''), Card(2, 'Hearts')]
-encoding = encode_cards(cards)
-print(encoding)
+""" Encode plays test """
+# plays = [discard_cards]
+# actions = encode_action_discard(plays)
+# print(actions)
+
+""" General Encoding and Decoding action test """
+# for i in range(195):
+#     discard_cards = decode_action_discard(i)
+#     plays = [discard_cards]
+#     actions = encode_action_discard(plays)
+#     if i != actions[0]:
+#         print(i)

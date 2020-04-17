@@ -5,7 +5,7 @@ import math
 import random
 from BasePlayer import BasePlayer
 from RandomPlayer import RandomPlayer
-from ReinforcementLearning.utils import decode_action_discard, encode_cards, encode_action_discard
+from ReinforcementLearning.utils import decode_action_discard, encode_cards, encode_action_discard, cards_to_str
 
 
 class GameEngine:
@@ -19,7 +19,9 @@ class GameEngine:
         self.player_id = 0
         """init game vars"""
         self.game_over = False
+        self.player_won = -1
         self.turn_number = 0
+        self.state = {}
 
         # """init player hands"""
         # self.hands = [[self.draw_pile.pop() for _ in range(7)] for player in players]
@@ -48,7 +50,8 @@ class GameEngine:
             player.add_cards_to_hand(cards)
 
     def game_loop(self, max_round=100):
-        round_cnt = 0        
+        """ This function is for manual control of the game only """
+        round_cnt = 0
         while round_cnt < max_round:
             print("======== Round " + str(round_cnt) + " =========")
             for player in self.players:
@@ -65,7 +68,7 @@ class GameEngine:
 
                 ''' Draw phase '''
                 pile_to_draw_from, cards = player.decide_cards_to_draw(self)
-                if pile_to_draw_from == "discard_pile" :
+                if pile_to_draw_from == "discard_pile":
                     discard_top = self.deck.draw_top_discard()
                     player.add_cards_to_hand([discard_top])
                 elif pile_to_draw_from == "unseen_pile":
@@ -88,19 +91,18 @@ class GameEngine:
     def step(self, action):
         """ Perform one step for the game for DQN """
         # select player
-        player = self.players[self.current_player_id]
+        player = self.players[self.player_id]
 
-        # check action 0 -- player calls yaniv
+        # check action 0 -- player calls Yaniv
         if action == 0:
             game_over = True
+            self.player_won = self.player_id
             self.player_id = (self.player_id + 1) % len(self.players)
             state = self.get_state(self.player_id)
             return player, state
 
         ''' Discard phase '''
         discard_cards = decode_action_discard(action)
-
-        # discard_cards = player.decide_cards_to_discard()
         player.extract_cards(discard_cards)
         self.deck.discard(discard_cards)
 
@@ -112,7 +114,6 @@ class GameEngine:
         elif pile_to_draw_from == "unseen_pile":
             card = self.deck.draw_top_card()
             player.add_cards_to_hand([card])
-        print("Player draws from : ", pile_to_draw_from)
 
         self.turn_number += 1
         self.player_id = (self.player_id + 1) % len(self.players)
@@ -141,15 +142,15 @@ class GameEngine:
         '''
         player = self.players[player_id]
         state = {}
-        state['deck'] = encode_cards(self.deck.get_cards())
-        state['discards'] = encode_cards(self.deck.get_discards())
+        state['deck'] = cards_to_str(self.deck.get_cards())
+        state['discards'] = cards_to_str(self.deck.get_discards())
         state['self'] = self.player_id
-        state['current_hand'] = encode_cards(player.show_cards())
+        state['current_hand'] = cards_to_str(player.show_cards())
         # get the other player's hand
         others_hands = []
         for p_id in len(self.players):
             if p_id != player_id:
-                others_hands.append(encode_cards(self.players[p_id].show_cards()))
+                others_hands.append(cards_to_str(self.players[p_id].show_cards()))
         state['others_hand'] = others_hands
         state['actions'] = encode_action_discard(player.show_plays())
         return state
@@ -158,7 +159,10 @@ class GameEngine:
         return self.game_over
 
     def get_payoff(self):
-        return -self.turn_number
+        # TODO may need more rules to ensure smaller cards get better awards
+        # check if player won the game
+        game_won_reward = 50 * (self.player_won == self.player_id)
+        return -self.turn_number + game_won_reward
 
 
 if __name__ == '__main__':
@@ -166,4 +170,3 @@ if __name__ == '__main__':
 
     game = GameEngine(players)
     # game.play_games(1)
-
