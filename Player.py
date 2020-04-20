@@ -24,7 +24,10 @@ class Player:
         self.hand.sort(key=lambda c: c.sort_value())
 
     def show_plays(self):
-        return Helpers.show_plays(self.hand)
+        plays = Helpers.show_plays(self.hand)
+        if self.yaniv():
+            plays += []
+        return plays
 
     def play_optimally(self):
         """A function that chooses to play optimally by choosing the last option in the plays"""
