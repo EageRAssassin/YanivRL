@@ -60,31 +60,34 @@ def encode_action_discard(play_list):
         # encode the cards in plays into individual action id
         # TODO if YANIV is included in the plays
         # TODO Does the straight plays from player always sorted?
+        if len(play) == 0:
+            action_id_list.append(0)
+            continue
 
         cards_have_same_value = True
-        for card in play:
-            if card.value != play[0].value:
+        for c in play:
+            if c.value != play[0].value:
                 cards_have_same_value = False
 
         action = 0
         if len(play) == 1:
             # single
             suit_num = suits.index(play[0].suit)
-            action = suit_num * 13 + card.value - 1
+            action = suit_num * 13 + play[0].value - 1
             action += 1
         elif len(play) == 2 and cards_have_same_value:
             # double
             suits_temp = [play[0].suit, play[1].suit]
             suits_temp.sort()
             suit_num = double_combination.index(suits_temp)
-            action = suit_num * 13 + card.value - 1
+            action = suit_num * 13 + play[0].value - 1
             action += 53
         elif len(play) == 3 and cards_have_same_value:
             # triple
             suits_temp = [play[0].suit, play[1].suit, play[2].suit]
             suits_temp.sort()
             suit_num = triple_combination.index(suits_temp)
-            action = suit_num * 13 + card.value - 1
+            action = suit_num * 13 + play[0].value - 1
             action += 131
         elif len(play) == 4 and cards_have_same_value:
             # quadruple
