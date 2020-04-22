@@ -12,36 +12,32 @@ class GameEngine:
     """Initializes a new game of Yaniv"""
 
     def __init__(self, players):
+        self.players = players
 
+    def init_game(self):
         """init cards"""
         self.deck = Deck()
-        self.players = players
-        self.player_id = 0
+        self.deal_card()
+
         """init game vars"""
+        self.player_id = 0
         self.game_over = False
         self.player_won = -1
         self.turn_number = 0
-        self.state = {}
-
-        """init player hands"""
-        self.hands = [[self.deck.pop() for _ in range(7)] for player in players]
-
-        for i in range(len(players)):
-            players[i].add_cards_to_hand(self.hands[i])
 
         """init top of discard pile"""
-        self.deck.previous_play = [self.deck.pop()]
+        self.deck.previous_play = [self.deck.cards.pop()]
+        self.state = {}
 
-    def get_top_discard(self):
-        return self.deck.get_top_discard()
+    def get_top_discards(self):
+        return self.deck.get_top_discards()
 
     def get_top_card(self):
         return self.deck.get_top_card()
 
     def play_games(self, num_games):
         for i in range(num_games):
-            self.deck = Deck()
-            self.deal_card()
+            self.init_game()
             self.game_loop()
 
     def deal_card(self):
@@ -67,9 +63,9 @@ class GameEngine:
                 self.deck.discard(discard_cards)
 
                 ''' Draw phase '''
-                pile_to_draw_from, cards = player.decide_cards_to_draw(self)
+                pile_to_draw_from, card = player.decide_cards_to_draw(self)
                 if pile_to_draw_from == "discard_pile":
-                    discard_top = self.deck.draw_top_discard()
+                    discard_top = self.deck.draw_top_discard(card)
                     player.add_cards_to_hand([discard_top])
                 elif pile_to_draw_from == "unseen_pile":
                     card = self.deck.draw_top_card()

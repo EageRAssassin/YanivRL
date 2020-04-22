@@ -31,7 +31,7 @@ class Deck:
         self.current_play.sort(key = lambda c: c.sort_value())
         #self.previous_play.sort(key = lambda c: c.sort_value())
 
-    def get_top_discard(self):
+    def get_top_discards(self):
         return [self.previous_play[0], self.previous_play[-1]] if len(self.previous_play) > 1 else self.previous_play
         # return self.discards[-1] if len(self.discards) > 0 else None
 

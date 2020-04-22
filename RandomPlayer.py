@@ -1,12 +1,13 @@
 from Player import Player
 import math
+import Helpers
 import random
 
 ''' Player that randomly choose his play. '''
 class RandomPlayer(Player):
 
     def decide_call_yaniv(self, game):
-        if self.get_hand_value() <= 5:
+        if Helpers.get_hand_value(self.hand) <= 5:
             return True
         return False
 
@@ -22,6 +23,6 @@ class RandomPlayer(Player):
         ''' Randomly draw from either unseen pile or discard pile '''
         i = random.randint(0, 1)
         if i > 0:
-            return "unseen_pile", [game.get_top_card()]
+            return "unseen_pile", None
         else:
-            return "discard_pile", [game.get_top_discard()]
+            return "discard_pile", random.choice(game.get_top_discards())

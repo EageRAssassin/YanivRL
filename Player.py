@@ -43,7 +43,7 @@ class Player:
         return self.get_hand_value() <= 5
 
     def get_hand_value(self):
-        Helpers.get_hand_value(self.hand)
+        return Helpers.get_hand_value(self.hand)
 
     def decide_cards_to_draw(self, game):
         '''

@@ -8,13 +8,12 @@ import Heuristic.HeuristicHelpers as HeuristicHelpers
 
 """A Simulated Annealing AI that uses internal temperature to decide plays"""
 class SimulatedAnnealingPlayer(Player):
-    self.intended_card_to_take = None
-    self.PENALTY_PER_TURN = HeuristicHelpers.SIMULATED_ANNEALING_PENALTY_PER_TURN
-    self.temperature = 1
-    self.turn_count = 0
-
     def __init__(self, id=None):
         super().__init__(id)
+        self.intended_card_to_take = None
+        self.PENALTY_PER_TURN = HeuristicHelpers.SIMULATED_ANNEALING_PENALTY_PER_TURN
+        self.temperature = 1
+        self.turn_count = 0
 
     def decide_call_yaniv(self, game):
         if self.get_hand_value() <= 5:

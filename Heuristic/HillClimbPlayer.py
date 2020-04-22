@@ -9,9 +9,10 @@ class HillClimbPlayer(Player):
         super().__init__(id)
         self.intended_card_to_take = None
         self.PENALTY_PER_TURN = HeuristicHelpers.HILL_CLIMB_PENALTY_PER_TURN
+        self.RANDOM_CARD_VALUE = HeuristicHelpers.HILL_CLIMB_RANDOM_CARD_VALUE
 
     def decide_call_yaniv(self, game):
-        if self.get_hand_value() <= 5:
+        if Helpers.get_hand_value(self.hand) <= 5:
             return True
         return False
 
@@ -28,19 +29,20 @@ class HillClimbPlayer(Player):
         plays_points = list(map(lambda play: sum(list(map(lambda x: x.value if x.value < 10 else 10, play))), plays))
 
         #do a play that removes most points
-        poss_plays_index = HeuristicHelpers.argsmax(play_points)
+        poss_plays_index = HeuristicHelpers.argsmax(plays_points)
 
         #check which of those leads to lowest score in future
         poss_scores = []
         for index in poss_plays_index:
             for card in plays[index]:
-                next_hand = hand.copy().remove(card)
+                next_hand = hand.copy()
+                next_hand.remove(card)
                 poss_scores.append(self.PENALTY_PER_TURN + self.score(next_hand))
 
         return min(poss_scores)
 
     def decide_cards_to_discard(self, game):
-        possible_takes = game.get_top_discard() #assume is a list of cards
+        possible_takes = game.get_top_discards() #assume is a list of cards
         possible_plays = Helpers.show_plays(self.hand)
 
         #a list of tuples of (card_to_take, best play, score assuming card is taken and best play is made)
@@ -62,7 +64,6 @@ class HillClimbPlayer(Player):
             poss_scores.append((poss_take, best_play, best_score))
 
         #take card from draw pile
-        poss_scores.append(None, self.PENALTY_PER_TURN + self.score(next_hand))
         scores = []
 
         #score each possible discard hand
@@ -71,10 +72,10 @@ class HillClimbPlayer(Player):
             for card in play:
                 next_hand.remove(card)
             next_hand.append(poss_take)
-            scores.append((play, score(next_hand, self.PENALTY_PER_TURN)))
+            scores.append((play, self.score(next_hand)))
 
         best_play, best_score = min(scores,key=lambda x:x[1])
-        poss_scores.append((poss_take, best_play, best_score))
+        poss_scores.append((None, best_play, self.RANDOM_CARD_VALUE + best_score))
 
         #choose play with minimum score
         best_take, best_play, best_score = min(poss_scores,key=lambda x:x[2])
