@@ -12,11 +12,12 @@ class SimulatedAnnealingPlayer(Player):
         super().__init__(id)
         self.intended_card_to_take = None
         self.PENALTY_PER_TURN = HeuristicHelpers.SIMULATED_ANNEALING_PENALTY_PER_TURN
+        self.RANDOM_CARD_VALUE = HeuristicHelpers.SIMULATED_ANNEALING_RANDOM_CARD_VALUE
         self.temperature = 1
         self.turn_count = 0
 
     def decide_call_yaniv(self, game):
-        if self.get_hand_value() <= 5:
+        if Helpers.get_hand_value(self.hand) <= 5:
             return True
         return False
 
@@ -39,14 +40,15 @@ class SimulatedAnnealingPlayer(Player):
         poss_scores = []
         for index in poss_plays_index:
             for card in plays[index]:
-                next_hand = hand.copy().remove(card)
+                next_hand = hand.copy()
+                next_hand.remove(card)
                 poss_scores.append(self.PENALTY_PER_TURN + self.score(next_hand))
 
         return min(poss_scores)
 
     """decide on a new temperature based on turn count and how close other players are to winning"""
     def find_new_temperature(self, game):
-        state = game.get_state()
+        state = game.get_state(game.player_id)
 
         #if any player has low number of cards, then game might be over soon, so cool based on lowest number of cards of any player
         min_others_size = min(list(map(lambda hand: len(hand),state['others_hand'])))
@@ -59,12 +61,11 @@ class SimulatedAnnealingPlayer(Player):
         return self.turn_number / (self.turn_number + estimated_turns_remaining)
 
     def decide_cards_to_discard(self, game):
-        possible_takes = game.get_top_discard() #assume is a list of cards
+        possible_takes = game.get_top_discards() #assume is a list of cards
         possible_plays = Helpers.show_plays(self.hand)
 
         self.turn_count += 1
-
-        self.temperature = self.find_new_temperature()
+        self.temperature = self.find_new_temperature(game)
 
         #a list of tuples of (card_to_take, best play, score assuming card is taken and best play is made)
         poss_scores = []
@@ -86,7 +87,6 @@ class SimulatedAnnealingPlayer(Player):
             poss_scores.append((poss_take, chosen_play, chosen_score))
 
         #take card from draw pile
-        poss_scores.append(None, self.PENALTY_PER_TURN + self.score(next_hand))
         scores = []
 
         #score each possible discard hand
@@ -95,7 +95,7 @@ class SimulatedAnnealingPlayer(Player):
             for card in play:
                 next_hand.remove(card)
             next_hand.append(poss_take)
-            scores.append((play, score(next_hand, self.PENALTY_PER_TURN)))
+            scores.append((play, self.score(next_hand)))
 
         scores.sort(key=lambda x:x[1])
         chosen_play, chosen_score = random.choice(scores[0 : int(len(scores) * self.temperature)])
