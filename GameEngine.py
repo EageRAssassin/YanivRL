@@ -30,7 +30,7 @@ class GameEngine:
             players[i].add_cards_to_hand(self.hands[i])
 
         """init top of discard pile"""
-        self.current_play = [self.deck.pop()]
+        self.deck.previous_play = [self.deck.pop()]
 
     def get_top_discard(self):
         return self.deck.get_top_discard()
