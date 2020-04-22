@@ -52,10 +52,11 @@ class GameEngine:
             print("======== Round " + str(round_cnt) + " =========")
             for player in self.players:
                 print("----- Current player :" + str(player) + "-------")
+                player_hand = player.show_cards()
+                print("Player's hand: ", [c for c in player_hand])
                 if player.decide_call_yaniv(self):
                     print(player, "calls Yaniv")
                     return player, self.get_players_scores(player)
-
                 ''' Discard phase '''
                 discard_cards = player.decide_cards_to_discard(self)
                 print("Player discards : ", [c for c in discard_cards])
