@@ -28,7 +28,8 @@ class YanivEnv(Env):
                 (numpy.array): The begining state of the game
                 (int): The begining player
         """
-        self.init_game()
+        init_state = self.game.get_state(self.game.player_id)
+        return self._extract_state(init_state), self.game.player_id
 
     def step(self, action, raw_action=False):
         """ Step forward
@@ -47,34 +48,6 @@ class YanivEnv(Env):
         self.timestep += 1
         next_state, player_id = self.game.step(action)
         return self._extract_state(next_state), player_id
-
-    def set_agents(self, agents):
-        """ Set the agents that will interact with the environment
-
-        Args:
-            agents (list): List of Agent classes
-        """
-        self.set_agents(agents)
-
-    def run(self, is_training=False, seed=None):
-        """ Run a complete game, either for evaluation or training RL agent.
-
-        Args:
-            is_training (boolean): True if for training purpose.
-            seed (int): A seed for running the game. For single-process program,
-              the seed should be set to None. For multi-process program, the
-              seed should be assigned for reproducibility.
-
-        Returns:
-            (tuple) Tuple containing:
-
-                (list): A list of trajectories generated from the environment.
-                (list): A list payoffs. Each entry corresponds to one player.
-
-        Note: The trajectories are 3-dimension list. The first dimension is for different players.
-              The second dimension is for different transitions. The third dimension is for the contents of each transiton
-        """
-        self.run(is_training, seed)
 
     def _extract_state(self, state):
         """ Encode state

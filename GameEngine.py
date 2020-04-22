@@ -23,14 +23,14 @@ class GameEngine:
         self.turn_number = 0
         self.state = {}
 
-        # """init player hands"""
-        # self.hands = [[self.draw_pile.pop() for _ in range(7)] for player in players]
+        """init player hands"""
+        self.hands = [[self.draw_pile.pop() for _ in range(7)] for player in players]
 
-        # for i in range(len(players)):
-        #     players[i].add_cards_to_hand(self.hands[i])
+        for i in range(len(players)):
+            players[i].add_cards_to_hand(self.hands[i])
 
-        # """init top of discard pile"""
-        # self.current_play = [self.draw_pile.pop()]
+        """init top of discard pile"""
+        self.current_play = [self.draw_pile.pop()]
 
     def get_top_discard(self):
         return self.deck.get_top_discard()
@@ -148,7 +148,7 @@ class GameEngine:
         state['current_hand'] = cards_to_str(player.show_cards())
         # get the other player's hand
         others_hands = []
-        for p_id in len(self.players):
+        for p_id in range(len(self.players)):
             if p_id != player_id:
                 others_hands.append(cards_to_str(self.players[p_id].show_cards()))
         state['others_hand'] = others_hands

@@ -8,12 +8,12 @@ from rlcard.utils.utils import set_global_seed, tournament
 from rlcard.utils.logger import Logger
 
 from ReinforcementLearning.RandomAgent import RandomAgent
+from ReinforcementLearning.yaniv_env import YanivEnv
+
 # Make environment
-
-env = rlcard.make('doudizhu')
-eval_env = rlcard.make('doudizhu')
-
-# TODO make new environment
+config_temp = {}
+env = YanivEnv(config_temp)
+eval_env = YanivEnv(config_temp)
 
 # Set the iterations numbers and how frequently we evaluate the performance
 evaluate_every = 100

@@ -27,28 +27,19 @@ class Env(object):
                   pretrained models
         """
         self.allow_step_back = False
-        self.allow_raw_data = config['allow_raw_data']
+        self.allow_raw_data = False
         self.record_action = False
 
         # Get the number of players/actions in this game
-        self.player_num = config['player_num']
-        self.action_num = config['action_num']
+        self.player_num = 3
+        self.action_num = 347
 
         # A counter for the timesteps
         self.timestep = 0
 
         # Modes
-        self.single_agent_mode = config['single_agent_mode']
-        self.active_player = config['active_player']
-
-        # Load pre-trained models if either single_agent_mode=True
-        if self.single_agent_mode:
-            self.model = self._load_model()
-            # If at least one pre-trained agent needs raw data, we set self.allow_raw_data = True
-            for agent in self.model.agents:
-                if agent.use_raw:
-                    self.allow_raw_data = True
-                    break
+        self.single_agent_mode = False
+        self.active_player = 0
 
     def init_game(self):
         """ Start a new game
