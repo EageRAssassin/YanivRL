@@ -24,10 +24,6 @@ class Deck:
 
     # discard() handles Step 1 by putting the cards to be discarded into the current_play pile
     def discard(self, cards):
-        """ Note: This part should be step 3
-        for card in previous_play:
-            self.discards.append(card)
-        """
         if isinstance(cards, list):
             self.current_play = cards
         else:
