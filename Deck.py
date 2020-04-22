@@ -4,6 +4,7 @@ import Cards
 class Deck:
     def __init__(self):
         self.cards = []
+        self.previous_play = []
         self.discards = []
         for suit in ["Clubs", "Diamonds", "Hearts", "Spades"]:
             for rank in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]:
@@ -16,20 +17,34 @@ class Deck:
         random.shuffle(self.cards)
 
     def discard(self, cards):
+        for card in previous_play:
+            self.discards.append(card)
+
         if isinstance(cards, list):
-            for card in cards:
-                self.discards.append(card)
+            self.previous_play = cards
         else:
-            self.discards.append(cards)
+            self.previous_play = [cards]
+        self.previous_play.sort(key = lambda c: c.sort_value())
 
     def get_top_discard(self):
-        return self.discards[-1] if len(self.discards) > 0 else None
+        return [self.previous_play[0], self.previous_play[-1]] if len(self.previous_play) > 1 else self.previous_play
+        # return self.discards[-1] if len(self.discards) > 0 else None
 
     def get_top_card(self):
         return self.cards[-1]
 
-    def draw_top_discard(self):
-        return self.discards.pop()
+    def draw_top_discard(self, card = None):
+        if (len(self.previous_play)) == 1:
+            return_card = self.previous_play[0]
+        elif card in [self.previous_play[0], self.previous_play[-1]]:
+            self.previous_play.remove(card)
+            for c in self.previous_play:
+                self.discards.append(c)
+            return_card = card
+        else:
+            raise CardNotExistInPreviousPlayError()
+        self.previous_play = []
+        return return_card
 
     def draw_top_card(self):
         if len(self.cards) == 1:

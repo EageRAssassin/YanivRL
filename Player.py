@@ -50,7 +50,7 @@ class Player:
             Decide which pile the player wish to draw card(s) from,
             and which cards he wish to draw.
 
-            Returns pile (string rep), a list of card
+            Returns pile (string rep), a card
         '''
         raise NotImplementedError
 
