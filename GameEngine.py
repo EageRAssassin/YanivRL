@@ -59,7 +59,7 @@ class GameEngine:
                 if player.decide_call_yaniv(self):
                     print(player, "calls Yaniv")
                     return player, self.get_players_scores(player)
-                
+
                 ''' Discard phase '''
                 discard_cards = player.decide_cards_to_discard(self)
                 print("Player discards : ", [c for c in discard_cards])
@@ -83,10 +83,10 @@ class GameEngine:
                 #     player.add_cards_to_hand(card)
                 # else:
                 #     player.add_cards_to_hand(take_discard)
-                #     
+                #
                 #     self.draw_pile.append(prev_discard_cards)
                 #     self.draw_pile.remove(take_discard)
-                # prev_discard_cards = discard_cards        
+                # prev_discard_cards = discard_cards
 
     def step(self, action):
         """ Perform one step for the game for DQN """
@@ -131,6 +131,8 @@ class GameEngine:
                 scores_dict[player.id] = player.get_hand_value()
         return scores_dict
 
+    #TODO - fix this so that it also reads in the previous_play, since it
+    #is NOT part of the discards pile
     def get_state(self, player_id):
         ''' Return player's state for DQN
 
