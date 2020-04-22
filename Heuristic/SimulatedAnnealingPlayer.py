@@ -1,12 +1,17 @@
+#SA because as games progress, moves should be more optimized,
+#but earlier on a move that does not maximize score at a given step could lead to better results in the future
+
 from Player import Player
 from Deck import Deck
 import Helpers
 import Heuristic.HeuristicHelpers as HeuristicHelpers
 
-"""A simple Hill Climb AI that tries to minimize its own hand every turn"""
-class HillClimbPlayer(Player):
+"""A Simulated Annealing AI that uses internal temperature to decide plays"""
+class SimulatedAnnealingPlayer(Player):
     self.intended_card_to_take = None
-    self.PENALTY_PER_TURN = HeuristicHelpers.HILL_CLIMB_PENALTY_PER_TURN
+    self.PENALTY_PER_TURN = HeuristicHelpers.SIMULATED_ANNEALING_PENALTY_PER_TURN
+    self.temperature = 1
+    self.turn_count = 0
 
     def __init__(self, id=None):
         super().__init__(id)
@@ -40,9 +45,27 @@ class HillClimbPlayer(Player):
 
         return min(poss_scores)
 
+    """decide on a new temperature based on turn count and how close other players are to winning"""
+    def find_new_temperature(self, game):
+        state = game.get_state()
+
+        #if any player has low number of cards, then game might be over soon, so cool based on lowest number of cards of any player
+        min_others_size = min(list(map(lambda hand: len(hand),state['others_hand'])))
+
+        #also consider own hand
+        self_score = sum(list(map(lambda c: c.value, self.hand)))
+
+        estimated_turns_remaining = min(int(self_score/5), min_others_size)
+
+        return self.turn_number / (self.turn_number + estimated_turns_remaining)
+
     def decide_cards_to_discard(self, game):
         possible_takes = game.get_top_discard() #assume is a list of cards
         possible_plays = Helpers.show_plays(self.hand)
+
+        self.turn_count += 1
+
+        self.temperature = self.find_new_temperature()
 
         #a list of tuples of (card_to_take, best play, score assuming card is taken and best play is made)
         poss_scores = []
@@ -59,8 +82,9 @@ class HillClimbPlayer(Player):
                 next_hand.append(poss_take)
                 scores.append((play, self.score(next_hand)))
 
-            best_play, best_score = min(scores,key=lambda x:x[1])
-            poss_scores.append((poss_take, best_play, best_score))
+            scores.sort(key=lambda x:x[1])
+            chosen_play, chosen_score = random.choice(scores[0 : int(len(scores) * self.temperature)])
+            poss_scores.append((poss_take, chosen_play, chosen_score))
 
         #take card from draw pile
         poss_scores.append(None, self.PENALTY_PER_TURN + self.score(next_hand))
@@ -74,55 +98,19 @@ class HillClimbPlayer(Player):
             next_hand.append(poss_take)
             scores.append((play, score(next_hand, self.PENALTY_PER_TURN)))
 
-        best_play, best_score = min(scores,key=lambda x:x[1])
-        poss_scores.append((poss_take, best_play, best_score))
+        scores.sort(key=lambda x:x[1])
+        chosen_play, chosen_score = random.choice(scores[0 : int(len(scores) * self.temperature)])
+        poss_scores.append((poss_take, chosen_play, chosen_score))
 
-        #choose play with minimum score
-        best_take, best_play, best_score = min(poss_scores,key=lambda x:x[2])
+        #choose play based on temperature
+        poss_scores.sort(key=lambda x:x[2])
+        chosen_take, chosen_play, chosen_score = random.choice(poss_scores[0 : int(len(poss_scores) * self.temperature)])
 
-        self.intended_card_to_take = best_take
-        return best_play
+        self.intended_card_to_take = chosen_take
+        return chosen_play
 
     def decide_cards_to_draw(self, game):
         if self.intended_card_to_take == None:
             return "unseen_pile", None
         else:
             return "discard_pile", self.intended_card_to_take
-
-#
-#
-# #Test Section
-# hand = Deck().get_cards()
-#
-# len(hand)
-# Helpers.get_hand_value(hand)
-# 340/54
-#
-#
-# player = HillClimbPlayer("HCP")
-#
-# player.add_cards_to_hand(hand)
-#
-# player.hand
-#
-# plays = player.show_plays()
-#
-# plays
-#
-# play_points = list(map(lambda play: sum(list(map(lambda x: x.value if x.value < 10 else 10, play))), plays))
-#
-# play_points
-#
-#
-# argsmax(play_points)
-#
-# plays[]
-# max(play_points)
-#
-# hand
-#
-# for card in plays[argmax(play_points)]:
-#     hand.remove(card)
-#
-#
-# player.score(player.hand)
