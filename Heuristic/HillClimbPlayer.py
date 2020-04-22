@@ -5,11 +5,10 @@ import Heuristic.HeuristicHelpers as HeuristicHelpers
 
 """A simple Hill Climb AI that tries to minimize its own hand every turn"""
 class HillClimbPlayer(Player):
-    self.intended_card_to_take = None
-    self.PENALTY_PER_TURN = HeuristicHelpers.HILL_CLIMB_PENALTY_PER_TURN
-
     def __init__(self, id=None):
         super().__init__(id)
+        self.intended_card_to_take = None
+        self.PENALTY_PER_TURN = HeuristicHelpers.HILL_CLIMB_PENALTY_PER_TURN
 
     def decide_call_yaniv(self, game):
         if self.get_hand_value() <= 5:

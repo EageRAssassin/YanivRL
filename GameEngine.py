@@ -24,13 +24,13 @@ class GameEngine:
         self.state = {}
 
         """init player hands"""
-        self.hands = [[self.draw_pile.pop() for _ in range(7)] for player in players]
+        self.hands = [[self.deck.pop() for _ in range(7)] for player in players]
 
         for i in range(len(players)):
             players[i].add_cards_to_hand(self.hands[i])
 
         """init top of discard pile"""
-        self.current_play = [self.draw_pile.pop()]
+        self.current_play = [self.deck.pop()]
 
     def get_top_discard(self):
         return self.deck.get_top_discard()
@@ -84,8 +84,8 @@ class GameEngine:
                 # else:
                 #     player.add_cards_to_hand(take_discard)
                 #
-                #     self.draw_pile.append(prev_discard_cards)
-                #     self.draw_pile.remove(take_discard)
+                #     self.deck.append(prev_discard_cards)
+                #     self.deck.remove(take_discard)
                 # prev_discard_cards = discard_cards
 
     def step(self, action):
