@@ -58,8 +58,6 @@ def encode_action_discard(play_list):
     action_id_list = []
     for play in play_list:
         # encode the cards in plays into individual action id
-        # TODO if YANIV is included in the plays
-        # TODO Does the straight plays from player always sorted?
         if len(play) == 0:
             action_id_list.append(0)
             continue
@@ -72,16 +70,20 @@ def encode_action_discard(play_list):
         action = 0
         if len(play) == 1:
             # single
-            suit_num = suits.index(play[0].suit)
-            action = suit_num * 13 + play[0].value - 1
-            action += 1
+            if play[0].suit != '':
+                # remove the option of discardings the Joker
+                suit_num = suits.index(play[0].suit)
+                action = suit_num * 13 + play[0].value - 1
+                action += 1
         elif len(play) == 2 and cards_have_same_value:
             # double
-            suits_temp = [play[0].suit, play[1].suit]
-            suits_temp.sort()
-            suit_num = double_combination.index(suits_temp)
-            action = suit_num * 13 + play[0].value - 1
-            action += 53
+            if play[0].suit != '':
+                # remove the option of discardings the Joker
+                suits_temp = [play[0].suit, play[1].suit]
+                suits_temp.sort()
+                suit_num = double_combination.index(suits_temp)
+                action = suit_num * 13 + play[0].value - 1
+                action += 53
         elif len(play) == 3 and cards_have_same_value:
             # triple
             suits_temp = [play[0].suit, play[1].suit, play[2].suit]

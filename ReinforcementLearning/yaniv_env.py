@@ -15,7 +15,7 @@ class YanivEnv(Env):
         super().__init__(config)
 
         # initialize the Yaniv game
-        players = [BasePlayer("BasePlayer1"), BasePlayer("BasePlayer2"), BasePlayer("BasePlayer3")]
+        players = [RandomPlayer("RandomPlayer1"), RandomPlayer("RandomPlayer2"), RandomPlayer("RandomPlayer2")]
         self.game = GameEngine(players)
         self.state_shape = [4, 54]
 
@@ -66,7 +66,7 @@ class YanivEnv(Env):
         obs[0] = encode_cards(state['deck'])
         obs[1] = encode_cards(state['discards'])
         obs[2] = encode_cards(state['current_hand'])
-        obs[3] = encode_cards(state['played_cards'])
+        obs[3] = encode_cards(state['others_hand'])
 
         extracted_state = {'obs': obs, 'legal_actions': self._get_legal_actions()}
         return extracted_state

@@ -12,22 +12,21 @@ class GameEngine:
     """Initializes a new game of Yaniv"""
 
     def __init__(self, players):
-        self.players = players
-
-    def init_game(self):
-        """init cards"""
-        self.deck = Deck()
-        self.deal_card()
-
-        """init game vars"""
         self.player_id = 0
+        self.players = players
         self.game_over = False
         self.player_won = -1
         self.turn_number = 0
+        self.deck = Deck()
 
+        """init cards"""
+        self.deal_card()
+
+        self.state = self.get_state(0)
+
+    def init_game(self):
         """init top of discard pile"""
         self.deck.previous_play = [self.deck.cards.pop()]
-        self.state = {}
 
     def get_top_discards(self):
         return self.deck.get_top_discards()
@@ -92,11 +91,11 @@ class GameEngine:
 
         # check action 0 -- player calls Yaniv
         if action == 0:
-            game_over = True
+            self.game_over = True
             self.player_won = self.player_id
             self.player_id = (self.player_id + 1) % len(self.players)
             state = self.get_state(self.player_id)
-            return player, state
+            return state, self.player_id
 
         ''' Discard phase '''
         discard_cards = decode_action_discard(action)
@@ -104,9 +103,9 @@ class GameEngine:
         self.deck.discard(discard_cards)
 
         ''' Draw phase '''
-        pile_to_draw_from, cards = player.decide_cards_to_draw()
+        pile_to_draw_from, card = player.decide_cards_to_draw(self)
         if pile_to_draw_from == "discard_pile":
-            discard_top = self.deck.draw_top_discard()
+            discard_top = self.deck.draw_top_discard(card)
             player.add_cards_to_hand([discard_top])
         elif pile_to_draw_from == "unseen_pile":
             card = self.deck.draw_top_card()
@@ -123,22 +122,22 @@ class GameEngine:
         scores_dict = {}
         for player in self.players:
             if player is yaniv_caller:
-                    scores_dict[player.id] = 0
+                scores_dict[player.id] = 0
             else:
                 scores_dict[player.id] = player.get_hand_value()
         return scores_dict
 
-    #TODO - fix this so that it also reads in the previous_play, since it
-    #is NOT part of the discards pile
+    # TODO - fix this so that it also reads in the previous_play, since it
+    # is NOT part of the discards pile
     def get_state(self, player_id):
-        ''' Return player's state for DQN
+        """ Return player's state for DQN
 
         Args:
             player_id (int): player id
 
         Returns:
             (dict): The state of the player
-        '''
+        """
         player = self.players[player_id]
         state = {}
         state['deck'] = cards_to_str(self.deck.get_cards())
@@ -149,7 +148,7 @@ class GameEngine:
         others_hands = []
         for p_id in range(len(self.players)):
             if p_id != player_id:
-                others_hands.append(cards_to_str(self.players[p_id].show_cards()))
+                others_hands.extend(cards_to_str(self.players[p_id].show_cards()))
         state['others_hand'] = others_hands
         state['actions'] = encode_action_discard(player.show_plays())
         return state
@@ -158,14 +157,16 @@ class GameEngine:
         return self.game_over
 
     def get_payoff(self):
-        # TODO may need more rules to ensure smaller cards get better awards
         # check if player won the game
-        game_won_reward = 50 * (self.player_won == self.player_id)
-        return -self.turn_number + game_won_reward
+        payoff = [0 for i in range(len(self.players))]
+        for i in range(len(self.players)):
+            if i != self.player_won:
+                payoff[self.player_id] = -self.players[i].get_hand_value()
+        return payoff
 
 
 if __name__ == '__main__':
     players = [RandomPlayer("Random1"), RandomPlayer("Random2")]
-
+    # players = [BasePlayer("Base1"), BasePlayer("Base2")]
     game = GameEngine(players)
     # game.play_games(1)
