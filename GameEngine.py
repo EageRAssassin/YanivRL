@@ -1,4 +1,3 @@
-from Cards import Card
 from Deck import Deck
 from numpy.random import shuffle
 import math
@@ -11,9 +10,9 @@ from ReinforcementLearning.utils import decode_action_discard, encode_cards, enc
 class GameEngine:
     """Initializes a new game of Yaniv"""
 
-    def __init__(self, players):
+    def __init__(self, players_input):
         self.player_id = 0
-        self.players = players
+        self.players = players_input
         self.game_over = False
         self.player_won = -1
         self.turn_number = 0
@@ -44,7 +43,7 @@ class GameEngine:
             cards = [self.deck.draw_top_card() for _ in range(7)]
             player.add_cards_to_hand(cards)
 
-    def game_loop(self, max_round=100):
+    def game_loop(self, max_round=1000):
         """ This function is for manual control of the game only """
         round_cnt = 0
         while round_cnt < max_round:
@@ -53,11 +52,16 @@ class GameEngine:
                 print("----- Current player :" + str(player) + "-------")
                 player_hand = player.show_cards()
                 print("Player's hand: ", [c for c in player_hand])
-                if player.decide_call_yaniv(self):
-                    print(player, "calls Yaniv")
-                    return player, self.get_players_scores(player)
+                # if player.decide_call_yaniv(self):
+                #     print(player, "calls Yaniv")
+                #     return player, self.get_players_scores(player)
                 ''' Discard phase '''
                 discard_cards = player.decide_cards_to_discard(self)
+
+                if not discard_cards:
+                    print(player, "calls Yaniv")
+                    return player, self.get_players_scores(player)
+
                 print("Player discards : ", [c for c in discard_cards])
                 player.extract_cards(discard_cards)
                 self.deck.discard(discard_cards)
@@ -114,9 +118,9 @@ class GameEngine:
         self.turn_number += 1
         self.player_id = (self.player_id + 1) % len(self.players)
         # get next state
-        state = self.get_state(self.player_id)
-        self.state = state
-        return state, self.player_id
+        self.state = self.get_state(self.player_id)
+        print('state:', self.state)
+        return self.state, self.player_id
 
     def get_players_scores(self, yaniv_caller):
         scores_dict = {}
@@ -162,11 +166,12 @@ class GameEngine:
         for i in range(len(self.players)):
             if i != self.player_won:
                 payoff[self.player_id] = -self.players[i].get_hand_value()
+            # compensate for the turn number, shorter is better
+            payoff[self.player_id] -= 1 + self.turn_number
         return payoff
 
 
 if __name__ == '__main__':
     players = [RandomPlayer("Random1"), RandomPlayer("Random2")]
-    # players = [BasePlayer("Base1"), BasePlayer("Base2")]
     game = GameEngine(players)
     # game.play_games(1)

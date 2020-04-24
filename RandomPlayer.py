@@ -17,6 +17,10 @@ class RandomPlayer(Player):
         # there are (choices) random choices
         # we pick a random number from 0 to choice
         choice = random.uniform(0, len(plays))
+
+        # TEMPORARY FEATURE, IF YANIV CAN BE CALLED, CALL YANIV
+        if Helpers.get_hand_value(self.hand) <= 5:
+            return []
         return plays[math.floor(choice)]
 
     def decide_cards_to_draw(self, game):
