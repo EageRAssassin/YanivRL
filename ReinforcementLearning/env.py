@@ -152,9 +152,6 @@ class Env(object):
         Note: The trajectories are 3-dimension list. The first dimension is for different players.
               The second dimension is for different transitions. The third dimension is for the contents of each transiton
         """
-        if self.single_agent_mode:
-            raise ValueError('Run in single agent not allowed.')
-
         if seed is not None:
             np.random.seed(seed)
             random.seed(seed)

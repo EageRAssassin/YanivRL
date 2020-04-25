@@ -20,10 +20,17 @@ class GameEngine:
 
         """init cards"""
         self.deal_card()
-
         self.state = self.get_state(0)
 
     def init_game(self):
+        """reinitialize the attributes"""
+        self.player_id = 0
+        self.game_over = False
+        self.player_won = -1
+        self.turn_number = 0
+        self.deck = Deck()
+        self.deal_card()
+        self.state = self.get_state(0)
         """init top of discard pile"""
         self.deck.previous_play = [self.deck.cards.pop()]
 

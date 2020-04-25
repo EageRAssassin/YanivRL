@@ -28,6 +28,7 @@ class YanivEnv(Env):
                 (numpy.array): The begining state of the game
                 (int): The begining player
         """
+        self.game.init_game()
         init_state = self.game.get_state(self.game.player_id)
         return self._extract_state(init_state), self.game.player_id
 
