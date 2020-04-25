@@ -3,7 +3,6 @@ import Cards
 import math
 import Helpers
 
-
 # class for Players that all Players should inherit from
 class Player:
     def __init__(self, id=None):
@@ -25,8 +24,11 @@ class Player:
 
     def show_plays(self):
         plays = Helpers.show_plays(self.hand)
+        """Remove the play of giving out a Joker"""
+        if str(plays[0][0]) == 'Joker':
+            plays.pop(0)
         if self.yaniv():
-            plays += []
+            plays = [[]]
         return plays
 
     def play_optimally(self):

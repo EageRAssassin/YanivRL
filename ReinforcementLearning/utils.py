@@ -66,7 +66,6 @@ def encode_action_discard(play_list):
         for c in play:
             if c.value != play[0].value:
                 cards_have_same_value = False
-        print(play_list)
         action = 0
         if len(play) == 1:
             # single

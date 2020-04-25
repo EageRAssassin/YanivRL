@@ -17,18 +17,19 @@ class GameEngine:
         self.player_won = -1
         self.turn_number = 0
         self.deck = Deck()
-
-        """init cards"""
-        self.deal_card()
-        self.state = self.get_state(0)
+        self.state = {}
 
     def init_game(self):
         """reinitialize the attributes"""
         self.player_id = 0
+        # clear the current hand of the players
+        for i in range(len(self.players)):
+            self.players[i].hand = []
         self.game_over = False
         self.player_won = -1
         self.turn_number = 0
         self.deck = Deck()
+        """init cards"""
         self.deal_card()
         self.state = self.get_state(0)
         """init top of discard pile"""
@@ -99,6 +100,9 @@ class GameEngine:
         """ Perform one step for the game for DQN """
         # select player
         player = self.players[self.player_id]
+        print("----- Current player :" + str(self.player_id) + "------- with action " + str(action))
+        player_hand = player.show_cards()
+        # print("Player's hand: ", [c for c in player_hand])
 
         # check action 0 -- player calls Yaniv
         if action == 0:
@@ -112,6 +116,7 @@ class GameEngine:
         discard_cards = decode_action_discard(action)
         player.extract_cards(discard_cards)
         self.deck.discard(discard_cards)
+        # print("Player discards : ", [c for c in discard_cards])
 
         ''' Draw phase '''
         pile_to_draw_from, card = player.decide_cards_to_draw(self)
@@ -122,11 +127,11 @@ class GameEngine:
             card = self.deck.draw_top_card()
             player.add_cards_to_hand([card])
 
+        # print("Player draws from : ", pile_to_draw_from)
         self.turn_number += 1
         self.player_id = (self.player_id + 1) % len(self.players)
         # get next state
         self.state = self.get_state(self.player_id)
-        print('state:', self.state)
         return self.state, self.player_id
 
     def get_players_scores(self, yaniv_caller):
@@ -181,4 +186,4 @@ class GameEngine:
 if __name__ == '__main__':
     players = [RandomPlayer("Random1"), RandomPlayer("Random2")]
     game = GameEngine(players)
-    # game.play_games(1)
+    game.play_games(1)
