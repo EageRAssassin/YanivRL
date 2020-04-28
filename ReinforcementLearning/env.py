@@ -167,11 +167,13 @@ class Env(object):
                 action, _ = self.agents[player_id].eval_step(state)
             else:
                 action = self.agents[player_id].step(state)
-
             # Environment steps
             next_state, next_player_id = self.step(action, self.agents[player_id].use_raw)
             # Save action
             trajectories[player_id].append(action)
+
+            # print('next_state, next_player_id', next_state, next_player_id)
+            # print('isover??', self.is_over())
 
             # Set the state and player
             state = next_state
@@ -180,7 +182,6 @@ class Env(object):
             # Save state.
             if not self.game.is_over():
                 trajectories[player_id].append(state)
-
         # Add a final state to all the players
         for player_id in range(self.player_num):
             state = self.get_state(player_id)

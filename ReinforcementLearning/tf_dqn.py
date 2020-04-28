@@ -1,13 +1,12 @@
 import tensorflow as tf
 import os
 
-import rlcard
 from rlcard.agents.dqn_agent import DQNAgent
+from rlcard.agents.random_agent import RandomAgent
 
 from rlcard.utils.utils import set_global_seed, tournament
 from rlcard.utils.logger import Logger
 
-from ReinforcementLearning.RandomAgent import RandomAgent
 from ReinforcementLearning.yaniv_env import YanivEnv
 
 # Make environment
@@ -16,7 +15,7 @@ env = YanivEnv(config_temp)
 eval_env = YanivEnv(config_temp)
 
 # Set the iterations numbers and how frequently we evaluate the performance
-evaluate_every = 100
+evaluate_every = 10
 evaluate_num = 1000
 episode_num = 100000
 
@@ -58,14 +57,14 @@ with tf.Session() as sess:
 
         # Generate data from the environment
         trajectories, _ = env.run(is_training=True)
-
         # Feed transitions into agent memory, and train the agent
         for ts in trajectories[0]:
             agent.feed(ts)
 
         # Evaluate the performance. Play with random agents.
         if episode % evaluate_every == 0:
-            logger.log_performance(env.timestep, tournament(eval_env, evaluate_num)[0])
+            t = tournament(eval_env, evaluate_num)[0]
+            logger.log_performance(env.timestep, t)
 
     # Close files in the logger
     logger.close_files()

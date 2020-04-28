@@ -100,7 +100,7 @@ class GameEngine:
         """ Perform one step for the game for DQN """
         # select player
         player = self.players[self.player_id]
-        print("----- Current player :" + str(self.player_id) + "------- with action " + str(action))
+        # print("----- Current player :" + str(self.player_id) + "------- with action " + str(action))
         player_hand = player.show_cards()
         # print("Player's hand: ", [c for c in player_hand])
 
