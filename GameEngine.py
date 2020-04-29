@@ -41,7 +41,7 @@ class GameEngine:
     def get_top_card(self):
         return self.deck.get_top_card()
 
-    def play_games(self, num_games, shuffle=True):
+    def play_games(self, num_games, shuffle=False):
         running_scores = {}
         for player in self.players:
             running_scores[player.id] = 0

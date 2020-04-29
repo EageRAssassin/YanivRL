@@ -5,8 +5,30 @@ from GameEngine import GameEngine
 from RandomPlayer import RandomPlayer
 from Heuristic.HillClimbPlayer import HillClimbPlayer
 from Heuristic.SimulatedAnnealingPlayer import SimulatedAnnealingPlayer
+from Heuristic.MinimaxPlayer import MinimaxPlayer
 
-players = [SimulatedAnnealingPlayer("SA1"), HillClimbPlayer("HC2")]
+
+R1 = RandomPlayer("R1")
+R2 = RandomPlayer("R2")
+R3 = RandomPlayer("R3")
+R4 = RandomPlayer("R4")
+
+HC1= HillClimbPlayer("HC1")
+HC2= HillClimbPlayer("HC2")
+HC3= HillClimbPlayer("HC3")
+HC4= HillClimbPlayer("HC4")
+
+SA1= SimulatedAnnealingPlayer("SA1")
+SA2= SimulatedAnnealingPlayer("SA2")
+SA3= SimulatedAnnealingPlayer("SA3")
+SA4= SimulatedAnnealingPlayer("SA4")
+
+M1= MinimaxPlayer("M1")
+M2= MinimaxPlayer("M2")
+M3= MinimaxPlayer("M3")
+M4= MinimaxPlayer("M4")
+
+players = [R1, HC1, HC2, SA1, SA2]
 
 game = GameEngine(players)
 game.play_games(10)
@@ -25,9 +47,3 @@ game.play_games(10)
 #
 # discard_top
 # game.players[0].add_cards_to_hand([discard_top])
-
-#
-# WANT: Expectiminimax
-# Games: play 10 games, keep track of number of wins of each Player, and also running total points
-# option to randomize positions
-# # DEBUG:

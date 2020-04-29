@@ -26,9 +26,7 @@ class SimulatedAnnealingPlayer(Player):
         self.turn_count = 0
 
     def decide_call_yaniv(self, game):
-        if Helpers.get_hand_value(self.hand) <= 5:
-            return True
-        return False
+        return Helpers.get_hand_value(self.hand) <= 5
 
     """ Assigns a score to the hand, lower scores are better"""
     def score(self, hand):

@@ -3,16 +3,22 @@ from Deck import Deck
 import Helpers
 import Heuristic.HeuristicHelpers as HeuristicHelpers
 
-"""A simple Hill Climb AI that tries to minimize its own hand every turn"""
-class HillClimbPlayer(Player):
+
+#ditch hand if others are winning
+#minimize next player given what we know of his hand
+
+# max(player) -> min all others
+
+"""A Minimax AI"""
+class MinimaxPlayer(Player):
     def __init__(self, id=None):
         super().__init__(id)
         self.intended_card_to_take = None
 
-        self.PENALTY_PER_TURN = HeuristicHelpers.HILL_CLIMB_PENALTY_PER_TURN
-        self.FIXED_RANDOM_VALUE = HeuristicHelpers.HILL_CLIMB_FIXED_RANDOM_VALUE
-        self.RANDOM_FIXED_VALUE = HeuristicHelpers.HILL_CLIMB_RANDOM_CARD_FIXED_VALUE
-        self.RANDOM_INIT_VALUE = HeuristicHelpers.HILL_CLIMB_RANDOM_CARD_INIT_VALUE
+        self.PENALTY_PER_TURN = HeuristicHelpers.MINIMAX_PENALTY_PER_TURN
+        self.FIXED_RANDOM_VALUE = HeuristicHelpers.MINIMAX_FIXED_RANDOM_VALUE
+        self.RANDOM_FIXED_VALUE = HeuristicHelpers.MINIMAX_RANDOM_CARD_FIXED_VALUE
+        self.RANDOM_INIT_VALUE = HeuristicHelpers.MINIMAX_RANDOM_CARD_INIT_VALUE
 
     def decide_call_yaniv(self, game):
         return Helpers.get_hand_value(self.hand) <= 5
@@ -43,7 +49,6 @@ class HillClimbPlayer(Player):
         return min(poss_scores)
 
     def decide_cards_to_discard(self, game):
-        #call yaniv when possible
         if (self.decide_call_yaniv(game)):
             return []
 
