@@ -47,6 +47,8 @@ class GameEngine:
             running_scores[player.id] = 0
 
         for i in range(num_games):
+            #below: does this properly shuffle the players order or cause something to break? test this
+            random.shuffle(self.players)
             self.init_game()
             winning_player, current_round_scores = self.game_loop()
             for player in self.players:
