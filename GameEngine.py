@@ -42,9 +42,17 @@ class GameEngine:
         return self.deck.get_top_card()
 
     def play_games(self, num_games):
+        running_scores = {}
+        for player in self.players:
+            running_scores[player.id] = 0
+
         for i in range(num_games):
             self.init_game()
-            self.game_loop()
+            winning_player, current_round_scores = self.game_loop()
+            for player in self.players:
+                running_scores[player.id] += current_round_scores[player.id]
+
+        return running_scores
 
     def deal_card(self):
         for player in self.players:
