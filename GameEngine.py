@@ -18,6 +18,7 @@ class GameEngine:
         self.turn_number = 0
         self.deck = Deck()
         self.state = {}
+        self.history = []
 
     def init_game(self):
         """reinitialize the attributes"""
@@ -93,6 +94,11 @@ class GameEngine:
                     card = self.deck.draw_top_card()
                     player.add_cards_to_hand([card])
                 print("Player draws from : ", pile_to_draw_from)
+
+                ''' Tracking the play that was just made '''
+                ''' Format: player ID, the card(s) discarded, the pile drawn from, and the card taken (None if taken from deck) '''
+                history_tuple = (player.id, discard_cards, pile_to_draw_from, card)
+                self.history.append(history_tuple)
 
                 round_cnt += 1
                 # the player want to choose randomly from the card pool
