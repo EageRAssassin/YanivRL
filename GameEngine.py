@@ -27,9 +27,10 @@ class GameEngine:
         """reinitialize the attributes"""
         self.player_id = 0
         # clear the current hand of the players
+        self.hand_history = []
         for i in range(len(self.players)):
             self.players[i].hand = []
-            self.hand_history.append([None, None, None, None, None, None, None])
+            self.hand_history.append([None for _ in range(7)])
         self.game_over = False
         self.player_won = -1
         self.turn_number = 0
@@ -108,7 +109,9 @@ class GameEngine:
                 self.history.append(history_tuple)
 
                 ''' Updating hand_history '''
-                current_public_hand = hand_history[(round_cnt%len(self.players))]
+                current_public_hand = self.hand_history[(round_cnt%len(self.players))]
+                print("Cur pub hand")
+                print(current_public_hand)
                 for discarded_card in discard_cards:
                     if discarded_card in current_public_hand:
                         current_public_hand.remove(discarded_card)
@@ -118,7 +121,7 @@ class GameEngine:
                     current_public_hand.append(card)
                 else:
                     current_public_hand.append(None)
-                hand_history[(round_cnt%len(self.players))] = current_public_hand
+                self.hand_history[(round_cnt%len(self.players))] = current_public_hand
 
 
                 round_cnt += 1

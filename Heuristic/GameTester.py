@@ -1,4 +1,5 @@
 %load_ext autoreload
+autoreload 2
 
 from GameEngine import GameEngine
 from RandomPlayer import RandomPlayer
