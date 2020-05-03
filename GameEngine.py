@@ -19,6 +19,9 @@ class GameEngine:
         self.deck = Deck()
         self.state = {}
         self.history = []
+        #format for hand_history:
+        #[[first player's public hand], [second player's public hand]...]
+        self.hand_history = []
 
     def init_game(self):
         """reinitialize the attributes"""
@@ -26,6 +29,7 @@ class GameEngine:
         # clear the current hand of the players
         for i in range(len(self.players)):
             self.players[i].hand = []
+            self.hand_history.append([None, None, None, None, None, None, None])
         self.game_over = False
         self.player_won = -1
         self.turn_number = 0
@@ -102,6 +106,20 @@ class GameEngine:
                 ''' Format: player ID, the card(s) discarded, the pile drawn from, and the card taken (None if taken from deck) '''
                 history_tuple = (player.id, discard_cards, pile_to_draw_from, card)
                 self.history.append(history_tuple)
+
+                ''' Updating hand_history '''
+                current_public_hand = hand_history[(round_cnt%len(self.players))]
+                for discarded_card in discard_cards:
+                    if discarded_card in current_public_hand:
+                        current_public_hand.remove(discarded_card)
+                    else:
+                        current_public_hand.remove(None)
+                if pile_to_draw_from == "discard_pile":
+                    current_public_hand.append(card)
+                else:
+                    current_public_hand.append(None)
+                hand_history[(round_cnt%len(self.players))] = current_public_hand
+
 
                 round_cnt += 1
                 # the player want to choose randomly from the card pool
