@@ -70,6 +70,34 @@ class Player:
         '''
         raise NotImplementedError
 
+    def estimate_random_card_value(self, game):
+        #initialize deck, remove any cards historically seen, return remaining value / deck size
+
+        estimate_deck = Deck()
+        remaining_value = 0
+        remaining_cards = 0
+
+        for card in self.hand:
+            estimate_deck.cards.remove(card)
+
+        for card in game.deck.discards:
+            estimate_deck.cards.remove(card)
+
+        for play in game.history:
+            if (play[2] == "discard_pile"):
+                if play[3] in estimate_deck.cards:
+                    estimate_deck.cards.remove(play[3])
+
+        for card in estimate_deck.cards:
+            if card.value >= 11:
+                remaining_value += 10
+            else:
+                remaining_value += card.value
+            remaining_cards += 1
+
+        return remaining_value/remaining_cards
+
+
 # testing player functionality
 # p = Player()
 # cards = []
