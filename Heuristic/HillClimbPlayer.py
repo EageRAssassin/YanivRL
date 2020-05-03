@@ -20,14 +20,14 @@ class HillClimbPlayer(Player):
     """ Assigns a score to the hand, lower scores are better"""
     def score(self, hand):
         #find total number of points in hand, cards above 10 are worth 10 points
-        points = sum(list(map(lambda x: x.value if x.value < 10 else 10, hand)))
+        points = Helpers.get_hand_value(hand)
 
         #find minimum turns necessary to get below 5 points
         if (points) <= 5:
             return points
 
         plays = Helpers.show_plays(hand)
-        plays_points = list(map(lambda play: sum(list(map(lambda x: x.value if x.value < 10 else 10, play))), plays))
+        plays_points = list(map(lambda play: Helpers.get_hand_value(play), plays))
 
         #do a play that removes most points
         poss_plays_index = HeuristicHelpers.argsmax(plays_points)

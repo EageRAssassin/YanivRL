@@ -36,6 +36,9 @@ class GameEngine:
         """init top of discard pile"""
         self.deck.previous_play = [self.deck.cards.pop()]
 
+    def get_num_players(self):
+        return len(players)
+
     def get_top_discards(self):
         return self.deck.get_top_discards()
 
