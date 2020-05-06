@@ -31,7 +31,7 @@ class Env(object):
         self.record_action = False
 
         # Get the number of players/actions in this game
-        self.player_num = 3
+        self.player_num = 2
         self.action_num = 347
 
         # A counter for the timesteps

@@ -15,7 +15,7 @@ class YanivEnv(Env):
         super().__init__(config)
 
         # initialize the Yaniv game
-        players = [RandomPlayer("RandomPlayer1"), RandomPlayer("RandomPlayer2"), RandomPlayer("RandomPlayer2")]
+        players = [RandomPlayer("RandomPlayer1"), RandomPlayer("RandomPlayer2")]
         self.game = GameEngine(players)
         self.state_shape = [4, 54]
 
@@ -116,4 +116,5 @@ class YanivEnv(Env):
         Returns:
             next_state (numpy.array): The next state
         """
-        self._single_agent_step(action)
+        # self._single_agent_step(action)
+        return
