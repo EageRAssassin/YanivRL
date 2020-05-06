@@ -26,4 +26,4 @@ for game_round in range(game_round_number):
     # print('player won is', env.game.player_won)
     winner_list.append(env.game.player_won)
 
-print('DQN players won ', winner_list.count(0)/(len(winner_list)), ' times in ', game_round_number, 'game rounds')
+print('DQN players won', winner_list.count(0), 'times in', game_round_number, 'game rounds')
