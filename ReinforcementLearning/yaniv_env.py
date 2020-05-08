@@ -2,6 +2,7 @@ import numpy as np
 
 from BasePlayer import BasePlayer
 from GameEngine import GameEngine
+from Heuristic.HillClimbPlayer import HillClimbPlayer
 from RandomPlayer import RandomPlayer
 from ReinforcementLearning.env import Env
 from ReinforcementLearning.utils import encode_cards
@@ -15,7 +16,21 @@ class YanivEnv(Env):
         super().__init__(config)
 
         # initialize the Yaniv game
-        players = [RandomPlayer("RandomPlayer1"), RandomPlayer("RandomPlayer2")]
+
+        players = []
+
+        # if player_config not specified in config, we initialize with two random player
+        if not ('player_config' in config):
+            players = [RandomPlayer("RandomPlayer1"), RandomPlayer("RandomPlayer2")]
+        # otherwise we will find the player_config to generate players
+        else:
+            for i in range(len(config['player_config'])):
+                player_type = config['player_config'][i]
+                if player_type == 'DQN' or player_type == 'Random':
+                    players.append(RandomPlayer('RandomPlayer' + str(i)))
+                elif player_type == 'HC':
+                    players.append(HillClimbPlayer('HC' + str(i)))
+
         self.game = GameEngine(players)
         self.state_shape = [4, 54]
 

@@ -31,7 +31,10 @@ class Env(object):
         self.record_action = False
 
         # Get the number of players/actions in this game
-        self.player_num = 2
+        if not ('player_config' in config):
+            self.player_num = 2
+        else:
+            self.player_num = len(config['player_config'])
         self.action_num = 347
 
         # A counter for the timesteps

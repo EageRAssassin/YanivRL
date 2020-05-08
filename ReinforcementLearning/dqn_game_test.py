@@ -11,15 +11,11 @@ dqn_agent = models.load('yaniv-dqn').agents[0]
 env.set_agents([dqn_agent, random_agent])
 
 winner_list = []
-
-print(">> Yaniv pre-trained model")
-
 game_round_number = 100
 
 for game_round in range(game_round_number):
 
     trajectories, payoffs = env.run(is_training=False)
-
     # trajectories[0] means player 0
     # trajectories[0][-1] means player 0's last state
     # final_state = trajectories[0][-1]
@@ -27,3 +23,4 @@ for game_round in range(game_round_number):
     winner_list.append(env.game.player_won)
 
 print('DQN players won', winner_list.count(0), 'times in', game_round_number, 'game rounds')
+print('Random players won', winner_list.count(1), 'times in', game_round_number, 'game rounds')

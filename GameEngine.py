@@ -144,19 +144,34 @@ class GameEngine:
         player_hand = player.show_cards()
         # print("Player's hand: ", [c for c in player_hand])
 
-        # check action 0 -- player calls Yaniv
-        if action == 0:
-            self.game_over = True
-            self.player_won = self.player_id
-            self.player_id = (self.player_id + 1) % len(self.players)
-            state = self.get_state(self.player_id)
-            return state, self.player_id
-
         ''' Discard phase '''
-        discard_cards = decode_action_discard(action)
-        player.extract_cards(discard_cards)
-        self.deck.discard(discard_cards)
-        # print("Player discards : ", [c for c in discard_cards])
+        # if that is a Hill Climbing player, it will decide its own actions
+        if 'HC' in player.id:
+            discard_cards = player.decide_cards_to_discard(self)
+
+            if not discard_cards:
+                self.game_over = True
+                self.player_won = self.player_id
+                self.player_id = (self.player_id + 1) % len(self.players)
+                state = self.get_state(self.player_id)
+                return state, self.player_id
+
+            player.extract_cards(discard_cards)
+            self.deck.discard(discard_cards)
+        # game engine will use the action id from environment to perform else
+        else:
+            # check action 0 -- player calls Yaniv
+            if action == 0:
+                self.game_over = True
+                self.player_won = self.player_id
+                self.player_id = (self.player_id + 1) % len(self.players)
+                state = self.get_state(self.player_id)
+                return state, self.player_id
+
+            discard_cards = decode_action_discard(action)
+            player.extract_cards(discard_cards)
+            self.deck.discard(discard_cards)
+            # print("Player discards : ", [c for c in discard_cards])
 
         ''' Draw phase '''
         pile_to_draw_from, card = player.decide_cards_to_draw(self)
