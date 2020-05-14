@@ -235,7 +235,8 @@ class MinimaxPlayer(Player):
         else:
             return "discard_pile", self.intended_card_to_take
 
-    def set_parameters(self, ppt, frv, rfv, riv):
+    def set_parameters(self, md, ppt, frv, rfv, riv):
+        self.MINIMAX_DEPTH = md
         self.PENALTY_PER_TURN = ppt
         self.FIXED_RANDOM_VALUE = frv
         self.RANDOM_FIXED_VALUE = rfv
