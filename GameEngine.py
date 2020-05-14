@@ -42,7 +42,7 @@ class GameEngine:
         self.deck.previous_play = [self.deck.cards.pop()]
 
     def get_num_players(self):
-        return len(players)
+        return len(self.players)
 
     def get_top_discards(self):
         return self.deck.get_top_discards()
@@ -223,6 +223,9 @@ class GameEngine:
         state['others_hand'] = others_hands
         state['actions'] = encode_action_discard(player.show_plays())
         return state
+
+    def get_other_player_hands(self, player_id):
+        return self.hand_history[player_id + 1 : len(self.players)] + self.hand_history[0 : player_id]
 
     def is_over(self):
         return self.game_over

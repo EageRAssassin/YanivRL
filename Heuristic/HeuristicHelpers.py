@@ -4,13 +4,13 @@ def argsmax(list):
     return np.argwhere(list == np.amax(list)).flatten().tolist()
 
 """#region Hill Climb"""
-HILL_CLIMB_PENALTY_PER_TURN = 15
+HILL_CLIMB_PENALTY_PER_TURN = 15 #prioritise multi card throw over singles
 
 #If FIXED_RANDOM_VALUE is True, then assume drawing a random card costs RANDOM_CARD_FIXED_VALUE
 HILL_CLIMB_FIXED_RANDOM_VALUE = False
-HILL_CLIMB_RANDOM_CARD_FIXED_VALUE = 7
+HILL_CLIMB_RANDOM_CARD_FIXED_VALUE = 7 #prioritise taking from random pile instead of discarded pile
 #Else assume random card value decreases as game progresses
-HILL_CLIMB_RANDOM_CARD_INIT_VALUE = 10
+HILL_CLIMB_RANDOM_CARD_INIT_VALUE = 10 #prioritise taking from random pile instead of discarded pile
 
 
 """#region Simulated Annealing"""

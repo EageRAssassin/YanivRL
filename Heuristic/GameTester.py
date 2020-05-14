@@ -28,31 +28,31 @@ M2= MinimaxPlayer("M2")
 M3= MinimaxPlayer("M3")
 M4= MinimaxPlayer("M4")
 
-players = [HC1, HC2]
+players = [HC1, M1]
 
 game = GameEngine(players)
 
 
+
 game.play_games(10)
 
-game.init_game()
-
-game.get_state(0)
-
-game.players[0].hand
-
-game.players[0].decide_cards_to_discard(game)
-game.get_top_discard()
-
-game.players[0].intended_card_to_take
-
-
-discard_top = game.deck.draw_top_discard()
-
-discard_top
-game.players[0].add_cards_to_hand([discard_top])
-
-a = 1 % 3
-3%3
-
-self.history= [(0,[play],card_taken), (1,[play],card_taken),()]
+# game.init_game()
+#
+# game.get_state(0)
+#
+# game.players[0].hand
+#
+# game.players[0].decide_cards_to_discard(game)
+# game.get_top_discard()
+#
+# game.players[0].intended_card_to_take
+#
+# discard_top = game.deck.draw_top_discard()
+#
+# discard_top
+# game.players[0].add_cards_to_hand([discard_top])
+#
+# a = 1 % 3
+# 3%3
+#
+# self.history= [(0,[play],card_taken), (1,[play],card_taken),()]
