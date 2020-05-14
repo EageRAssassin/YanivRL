@@ -28,7 +28,6 @@ class GameEngine:
         self.player_id = 0
         # clear the current hand of the players
         self.hand_history = [[None for _ in range(7)] for _ in range(len(self.players))]
-        print(self.hand_history)
         for i in range(len(self.players)):
             self.players[i].hand = []
         self.game_over = False
@@ -108,10 +107,9 @@ class GameEngine:
                 history_tuple = (player.id, discard_cards, pile_to_draw_from, card)
                 self.history.append(history_tuple)
 
+
                 ''' Updating hand_history '''
-                current_public_hand = self.hand_history[(round_cnt%len(self.players))]
-                print("hand_history pre change")
-                print(self.hand_history)
+                current_public_hand = self.hand_history[self.player_id]
                 for discarded_card in discard_cards:
                     if discarded_card in current_public_hand:
                         current_public_hand.remove(discarded_card)
@@ -121,12 +119,11 @@ class GameEngine:
                     current_public_hand.append(card)
                 else:
                     current_public_hand.append(None)
-                print("Cur pub hand post change")
-                print(current_public_hand)
-                self.hand_history[(round_cnt%len(self.players))] = current_public_hand
+                self.hand_history[self.player_id] = current_public_hand
 
 
                 round_cnt += 1
+                self.player_id = (self.player_id + 1) % len(self.players)
                 # the player want to choose randomly from the card pool
                 # if take_discard is None:
                 #     card = self.deck.draw_top_card()

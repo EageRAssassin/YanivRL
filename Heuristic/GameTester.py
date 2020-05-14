@@ -28,7 +28,7 @@ M2= MinimaxPlayer("M2")
 M3= MinimaxPlayer("M3")
 M4= MinimaxPlayer("M4")
 
-players = [HC1, M1]
+players = [HC1, M1, SA1]
 
 game = GameEngine(players)
 

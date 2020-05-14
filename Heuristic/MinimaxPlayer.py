@@ -140,7 +140,7 @@ class MinimaxPlayer(Player):
 
             return min(minimaxes,key=lambda x:x[2])
         else: #else maximize score
-            hand_to_consider = others_hands[(depth % num_players) - 1]
+            hand_to_consider = others_hands[(depth % num_players) - 1].copy()
             if len(hand_to_consider) == 0:
                 return (None, None, 0)
 
@@ -223,6 +223,7 @@ class MinimaxPlayer(Player):
             return []
 
         others_hands = game.get_other_player_hands(game.player_id)
+
         (best_take, best_play, best_score) = self.minimax_play(self.hand, others_hands, game.get_top_discards(), game.get_num_players(), 0)
 
         self.intended_card_to_take = best_take
