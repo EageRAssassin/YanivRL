@@ -27,10 +27,9 @@ class GameEngine:
         """reinitialize the attributes"""
         self.player_id = 0
         # clear the current hand of the players
-        self.hand_history = []
+        self.hand_history = [[None for _ in range(7)] for _ in range(len(self.players))]
         for i in range(len(self.players)):
             self.players[i].hand = []
-            self.hand_history.append([None for _ in range(7)])
         self.game_over = False
         self.player_won = -1
         self.turn_number = 0

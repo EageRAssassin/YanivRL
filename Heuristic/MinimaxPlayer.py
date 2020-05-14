@@ -87,6 +87,9 @@ class MinimaxPlayer(Player):
 
         #if is self, minimize score
         if (depth % num_players == 0):
+            if len(self.hand) == 0:
+                return (None, None, 0)
+
             possible_plays = Helpers.show_plays(self.hand)
 
             #a list of tuples of (card_to_take, best play, score assuming card is taken and best play is made)
@@ -138,6 +141,9 @@ class MinimaxPlayer(Player):
             return min(minimaxes,key=lambda x:x[2])
         else: #else maximize score
             hand_to_consider = others_hands[(depth % num_players) - 1]
+            if len(hand_to_consider) == 0:
+                return (None, None, 0)
+
             known_cards = [card for card in hand_to_consider if card is not None]
 
             #if entire hand is unknown, simply compare random card value
