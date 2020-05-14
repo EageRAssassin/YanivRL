@@ -32,8 +32,6 @@ players = [HC1, M1]
 
 game = GameEngine(players)
 
-
-
 game.play_games(10)
 
 # game.init_game()
