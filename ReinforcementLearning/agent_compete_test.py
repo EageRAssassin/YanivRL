@@ -15,12 +15,15 @@ dqn_agent = models.load('yaniv-dqn').agents[0]
 env.set_agents([dqn_agent, random_agent, random_agent])
 
 winner_list = []
+score_list = []
 game_round_number = 100
 
 for game_round in range(game_round_number):
     trajectories, payoffs = env.run(is_training=False)
     winner_list.append(env.game.player_won)
+    score_list.append(env.game.get_players_scores(env.game.player_won))
 
 print('DQN player won', winner_list.count(0), 'times in', game_round_number, 'game rounds')
 print('Random player won', winner_list.count(1), 'times in', game_round_number, 'game rounds')
 print('Hill Climb player won', winner_list.count(2), 'times in', game_round_number, 'game rounds')
+print('The score list for the games is', score_list)
