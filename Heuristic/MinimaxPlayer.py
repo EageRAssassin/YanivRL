@@ -21,7 +21,14 @@ class MinimaxPlayer(Player):
         self.RANDOM_INIT_VALUE = HeuristicHelpers.MINIMAX_RANDOM_CARD_INIT_VALUE
 
     def decide_call_yaniv(self, game):
-        return Helpers.get_hand_value(self.hand) <= 5
+        if Helpers.get_hand_value(self.hand) > 5:
+            return False
+        others_hands = game.get_other_player_hands(game.player_id)
+
+        #if someone else has a better hand, dont call Yaniv even if less than 5 points
+        best_other_val = min([sum([self.RANDOM_FIXED_VALUE if card == None else card.value for card in hand]) for hand in h])
+
+        return Helpers.get_hand_value(self.hand) < best_other_val
 
     """ Assigns a score to the hand, lower scores are better"""
     def score(self, hand):
