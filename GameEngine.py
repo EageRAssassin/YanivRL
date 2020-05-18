@@ -51,8 +51,10 @@ class GameEngine:
 
     def play_games(self, num_games, shuffle=False):
         running_scores = {}
+        total_wins = {}
         for player in self.players:
             running_scores[player.id] = 0
+            total_wins[player.id] = 0
 
         for i in range(num_games):
             if (shuffle):
@@ -61,8 +63,10 @@ class GameEngine:
             winning_player, current_round_scores = self.game_loop()
             for player in self.players:
                 running_scores[player.id] += current_round_scores[player.id]
+                if current_round_scores[player.id] == 0:
+                    total_wins[player.id] += 1
 
-        return running_scores
+        return running_scores, total_wins
 
     def deal_card(self):
         for player in self.players:
