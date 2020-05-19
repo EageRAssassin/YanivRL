@@ -3,6 +3,8 @@ import numpy as np
 from BasePlayer import BasePlayer
 from GameEngine import GameEngine
 from Heuristic.HillClimbPlayer import HillClimbPlayer
+from Heuristic.MinimaxPlayer import MinimaxPlayer
+from Heuristic.SimulatedAnnealingPlayer import SimulatedAnnealingPlayer
 from RandomPlayer import RandomPlayer
 from ReinforcementLearning.env import Env
 from ReinforcementLearning.utils import encode_cards
@@ -26,10 +28,16 @@ class YanivEnv(Env):
         else:
             for i in range(len(config['player_config'])):
                 player_type = config['player_config'][i]
-                if player_type == 'DQN' or player_type == 'Random':
+                if player_type == 'DQN':
+                    players.append(RandomPlayer('RDQNPlayer' + str(i)))
+                elif player_type == 'Random':
                     players.append(RandomPlayer('RandomPlayer' + str(i)))
                 elif player_type == 'HC':
                     players.append(HillClimbPlayer('HC' + str(i)))
+                elif player_type == 'Minimax':
+                    players.append(MinimaxPlayer('Minimax' + str(i)))
+                elif player_type == 'SA':
+                    players.append(SimulatedAnnealingPlayer('SA' + str(i)))
 
         self.game = GameEngine(players)
         self.state_shape = [4, 54]
