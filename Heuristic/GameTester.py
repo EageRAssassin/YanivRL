@@ -8,49 +8,34 @@ from Heuristic.SimulatedAnnealingPlayer import SimulatedAnnealingPlayer
 from Heuristic.MinimaxPlayer import MinimaxPlayer
 
 
-R1 = RandomPlayer("R1")
-R2 = RandomPlayer("R2")
-R3 = RandomPlayer("R3")
-R4 = RandomPlayer("R4")
+RandPlayer = RandomPlayer("Random")
+HCPlayer= HillClimbPlayer("Hill Climbing")
+SAPlayer= SimulatedAnnealingPlayer("Simulated Annealing")
+MMPlayer= MinimaxPlayer("Minimax")
 
-HC1= HillClimbPlayer("HC1")
-HC2= HillClimbPlayer("HC2")
-HC3= HillClimbPlayer("HC3")
-HC4= HillClimbPlayer("HC4")
+game = GameEngine([RandPlayer, SAPlayer, MMPlayer, HCPlayer])
 
-SA1= SimulatedAnnealingPlayer("SA1")
-SA2= SimulatedAnnealingPlayer("SA2")
-SA3= SimulatedAnnealingPlayer("SA3")
-SA4= SimulatedAnnealingPlayer("SA4")
 
-M1= MinimaxPlayer("M1")
-M2= MinimaxPlayer("M2")
-M3= MinimaxPlayer("M3")
-M4= MinimaxPlayer("M4")
+game.play_games(1,True)
 
-players = [HC1, M1, SA1]
+#parameters are num_rounds, print_verbose, shuffle_player_order
+game = GameEngine([RandPlayer, SAPlayer, MMPlayer, HCPlayer])
+scores, wins = game.play_games(1000,False, True)
+scores
+wins
 
-game = GameEngine(players)
-
-game.play_games(10)
-
-# game.init_game()
+# game = GameEngine([SAPlayer, HCPlayer])
+# scores, wins = game.play_games(1000,False)
+# scores
+# wins
 #
-# game.get_state(0)
 #
-# game.players[0].hand
+# game = GameEngine([MMPlayer, HCPlayer])
+# scores, wins = game.play_games(1000,False)
+# scores
+# wins
 #
-# game.players[0].decide_cards_to_discard(game)
-# game.get_top_discard()
-#
-# game.players[0].intended_card_to_take
-#
-# discard_top = game.deck.draw_top_discard()
-#
-# discard_top
-# game.players[0].add_cards_to_hand([discard_top])
-#
-# a = 1 % 3
-# 3%3
-#
-# self.history= [(0,[play],card_taken), (1,[play],card_taken),()]
+# game = GameEngine([SAPlayer, MMPlayer])
+# scores, wins = game.play_games(1000,False)
+# scores
+# wins

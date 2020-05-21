@@ -49,7 +49,7 @@ class GameEngine:
     def get_top_card(self):
         return self.deck.get_top_card()
 
-    def play_games(self, num_games, shuffle=False):
+    def play_games(self, num_games, verbose=True, shuffle=False):
         running_scores = {}
         total_wins = {}
         for player in self.players:
@@ -59,8 +59,10 @@ class GameEngine:
         for i in range(num_games):
             if (shuffle):
                 random.shuffle(self.players)
+            if (i % 50 == 0):
+                print("Game " + str(i))
             self.init_game()
-            winning_player, current_round_scores = self.game_loop()
+            winning_player, current_round_scores = self.game_loop(verbose)
             for player in self.players:
                 running_scores[player.id] += current_round_scores[player.id]
                 if current_round_scores[player.id] == 0:
@@ -73,15 +75,16 @@ class GameEngine:
             cards = [self.deck.draw_top_card() for _ in range(7)]
             player.add_cards_to_hand(cards)
 
-    def game_loop(self, max_round=1000):
+    def game_loop(self, verbose=True, max_round=1000):
         """ This function is for manual control of the game only """
         round_cnt = 0
+
         while round_cnt < max_round:
-            print("======== Round " + str(round_cnt) + " =========")
+            if (verbose): print("======== Round " + str(round_cnt) + " =========")
             for player in self.players:
-                print("----- Current player :" + str(player) + "-------")
+                if (verbose): print("----- Current player :" + str(player) + "-------")
                 player_hand = player.show_cards()
-                print("Player's hand: ", [c for c in player_hand])
+                if (verbose): print("Player's hand: ", [c for c in player_hand])
                 # if player.decide_call_yaniv(self):
                 #     print(player, "calls Yaniv")
                 #     return player, self.get_players_scores(player)
@@ -89,10 +92,10 @@ class GameEngine:
                 discard_cards = player.decide_cards_to_discard(self)
 
                 if not discard_cards:
-                    print(player, "calls Yaniv")
+                    if (verbose): print(player, "calls Yaniv")
                     return player, self.get_players_scores(player)
 
-                print("Player discards : ", [c for c in discard_cards])
+                if (verbose): print("Player discards : ", [c for c in discard_cards])
                 player.extract_cards(discard_cards)
                 self.deck.discard(discard_cards)
 
@@ -104,7 +107,7 @@ class GameEngine:
                 elif pile_to_draw_from == "unseen_pile":
                     card = self.deck.draw_top_card()
                     player.add_cards_to_hand([card])
-                print("Player draws from : ", pile_to_draw_from)
+                if (verbose): print("Player draws from : ", pile_to_draw_from)
 
                 ''' Tracking the play that was just made '''
                 ''' Format: player ID, the card(s) discarded, the pile drawn from, and the card taken (None if taken from deck) '''
